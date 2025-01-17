@@ -1,11 +1,11 @@
 import { Container } from '@/components/shared/container';
-import { Today } from '@/components/shared/today/today';
+import { Services } from '@/components/shared/services/services';
 
-export default function Home() {
+export default function page() {
   return (
     <div>
       <Container>
-        <Today />
+        <Services />
       </Container>
     </div>
   );
