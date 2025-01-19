@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Container } from "../container";
-import { ChartArea, ChevronRight, CircleUser, HelpCircle } from "lucide-react";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
+import { Container } from '../container';
+import { ChartArea, ChevronRight, CircleUser, HelpCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   className?: string;
@@ -13,21 +14,25 @@ interface Props {
 const settings = [
   {
     id: 1,
-    name: "Статистика",
+    name: 'Статистика',
     icon: <ChartArea />,
+    link: '/settings/statistics',
   },
   {
     id: 6,
-    name: "Help",
+    name: 'Help',
     icon: <HelpCircle />,
+    link: '/settings/help',
   },
   {
     id: 7,
-    name: "Профиль",
+    name: 'Профиль',
     icon: <CircleUser />,
+    link: '/settings/account',
   },
 ];
 export const Settings: React.FC<Props> = ({ className }) => {
+  const router = useRouter();
   return (
     <Container className="flex flex-col  justify-between gap-5">
       <div className="flex items-center gap-3">
@@ -38,6 +43,9 @@ export const Settings: React.FC<Props> = ({ className }) => {
           <Card
             key={setting.id}
             className="p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-accent dark:hover:bg-accent transition-all duration-100"
+            onClick={() => {
+              router.push(setting.link);
+            }}
           >
             <div className="flex items-center gap-3">
               {setting.icon}

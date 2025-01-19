@@ -4,7 +4,7 @@ import Missed from '@/components/shared/services/missed';
 export default function page() {
   return (
     <div>
-      <Container><Missed/></Container>
+      <Missed />
     </div>
   );
 }

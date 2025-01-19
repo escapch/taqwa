@@ -1,10 +1,12 @@
 'use client';
-import { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
+import { useState } from 'react';
+import { Calendar } from '@/components/ui/calendar';
+import { Container } from '../container';
+import { Header } from '../widgets/header';
 
 export default function Missed() {
   const [startDate, setStartDate] = useState<Date | null>(null); // Начальная дата
-  const [customDate, setCustomDate] = useState(""); // Для ввода своей даты
+  const [customDate, setCustomDate] = useState(''); // Для ввода своей даты
 
   // Обработчик изменения своей даты
   const handleSetCustomDate = () => {
@@ -12,12 +14,13 @@ export default function Missed() {
     if (!isNaN(parsedDate.getTime())) {
       setStartDate(parsedDate);
     } else {
-      alert("Некорректная дата. Введите дату в формате YYYY-MM-DD.");
+      alert('Некорректная дата. Введите дату в формате YYYY-MM-DD.');
     }
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6">
+    <Container className="flex flex-col  justify-between gap-5">
+      <Header headerTitle="Пропущенные намазы" />
       {!startDate ? (
         <div className="flex flex-col items-center gap-2">
           <input
@@ -35,15 +38,13 @@ export default function Missed() {
         </div>
       ) : (
         <p className="text-sm text-gray-600">
-          Отслеживание начато с:{" "}
-          {new Intl.DateTimeFormat("ru-RU", { dateStyle: "long" }).format(
-            startDate
-          )}
+          Отслеживание начато с:{' '}
+          {new Intl.DateTimeFormat('ru-RU', { dateStyle: 'long' }).format(startDate)}
         </p>
       )}
 
       {/* Примерный рендер календаря */}
       <Calendar />
-    </div>
+    </Container>
   );
 }

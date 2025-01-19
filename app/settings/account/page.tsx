@@ -1,5 +1,9 @@
-import { Settings } from "@/components/shared/settings/settings";
+import { Account } from '@/components/shared/settings/account/account';
 
 export default function page() {
-  return <div>Профиль</div>;
+  return (
+    <div>
+      <Account />
+    </div>
+  );
 }
