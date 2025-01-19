@@ -10,7 +10,7 @@ export const Container: React.FC<React.PropsWithChildren<Props>> = ({
   children,
 }) => {
   return (
-    <div className={cn('sm:mx-auto max-w-[640px] mt-4 mx-1', className)}>
+    <div className={cn('sm:mx-auto max-w-[640px] my-4 mx-1', className)}>
       {children}
     </div>
   );

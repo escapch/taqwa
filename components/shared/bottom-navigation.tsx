@@ -20,9 +20,9 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <nav className={cn('fixed bottom-0 left-0 w-full', className)}>
-      <Container className="flex items-center justify-between">
-        <div className="flex justify-around py-3 px-5 w-full">
+    <nav className={cn('fixed bottom-0 left-0 w-full dark:bg-[#09090b] bg-white', className)}>
+      <Container className="flex items-center justify-between my-0">
+        <div className="flex justify-around py-2 px-5 w-full">
           {navItems.map(({ path, label, icon: Icon }) => {
             const isActive = pathname === path;
             return (

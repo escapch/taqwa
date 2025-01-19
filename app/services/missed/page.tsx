@@ -1,9 +1,10 @@
 import { Container } from '@/components/shared/container';
+import Missed from '@/components/shared/services/missed';
 
 export default function page() {
   return (
     <div>
-      <Container>missed</Container>
+      <Container><Missed/></Container>
     </div>
   );
 }

@@ -71,3 +71,27 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.completed-day::after {
+  content: "";
+  position: absolute;
+  bottom: 0.25rem; /* Расположить точку снизу */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: green; /* 🟢 Зелёная точка */
+  border-radius: 50%;
+}
+
+.missed-day::after {
+  content: "";
+  position: absolute;
+  bottom: 0.25rem; /* Расположить точку снизу */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: red; /* 🔴 Красная точка */
+  border-radius: 50%;
+}
