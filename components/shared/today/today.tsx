@@ -1,11 +1,11 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Container } from '../container';
-import { ClockWidget } from '../widgets/clock';
-import { TodoList } from '../widgets/todo-list';
-import { Card } from '@/components/ui/card';
-import { Veсize } from '../widgets/veсize';
-import { ThemeToggle } from '../widgets/theme-toggle';
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Container } from "../container";
+import { ClockWidget } from "../widgets/clock";
+import { TodoList } from "../widgets/todo-list";
+import { Card } from "@/components/ui/card";
+import { Veсize } from "../widgets/veсize";
+import { ThemeToggle } from "../widgets/theme-toggle";
 
 interface Props {
   className?: string;
