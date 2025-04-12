@@ -73,7 +73,7 @@ body {
 }
 
 .completed-day::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0.25rem; /* Расположить точку снизу */
   left: 50%;
@@ -85,7 +85,7 @@ body {
 }
 
 .missed-day::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0.25rem; /* Расположить точку снизу */
   left: 50%;
@@ -94,4 +94,12 @@ body {
   height: 0.5rem;
   background-color: red; /* 🔴 Красная точка */
   border-radius: 50%;
+}
+
+.dark .rdp-root {
+  --rdp-accent-color: hsla(var(--primary));
+}
+
+.light .rdp-root {
+  --rdp-accent-color: hsla(var(--primary));
 }

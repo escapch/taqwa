@@ -12,14 +12,7 @@ import { Button } from '@/components/ui/button';
 import { AuthComponent } from '../auth-component';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  arrayRemove,
-} from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayRemove } from 'firebase/firestore';
 
 interface Props {
   className?: string;
@@ -93,15 +86,15 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     setTodoList(updatedTodoList);
 
     // Синхронизация с Firestore
-    const updatedTodo = updatedTodoList.find((todo) => todo.id === id);
-    if (updatedTodo) {
-      await updateTaskStatus(
-        user.uid,
-        today,
-        updatedTodo.value,
-        updatedTodo.completed,
-      );
-    }
+    // const updatedTodo = updatedTodoList.find((todo) => todo.id === id);
+    // if (updatedTodo) {
+    //   await updateTaskStatus(
+    //     user.uid,
+    //     today,
+    //     updatedTodo.value,
+    //     updatedTodo.completed,
+    //   );
+    // }
   };
 
   const addTodo = async () => {
@@ -117,49 +110,49 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     setNewTodo('');
 
     // Добавление пользовательской задачи в Firestore
-    const userTasksRef = doc(getFirestore(), `users/${user.uid}/tasks`, today);
-    const tasksSnap = await getDoc(userTasksRef);
-    if (tasksSnap.exists()) {
-      const tasks = tasksSnap.data();
-      const updatedCustomTasks = [...(tasks.customTasks || []), newTask];
-      await updateDoc(userTasksRef, { customTasks: updatedCustomTasks });
-    }
+    // const userTasksRef = doc(getFirestore(), `users/${user.uid}/tasks`, today);
+    // const tasksSnap = await getDoc(userTasksRef);
+    // if (tasksSnap.exists()) {
+    //   const tasks = tasksSnap.data();
+    //   const updatedCustomTasks = [...(tasks.customTasks || []), newTask];
+    //   await updateDoc(userTasksRef, { customTasks: updatedCustomTasks });
+    // }
   };
 
   const removeTodo = (id: number) => {
     setTodoList((prev) => prev.filter((todo) => todo.id !== id));
   };
 
-  const removeCustomTask = async (
-    userId: string,
-    date: string,
-    taskToRemove: { id: number; title: string; completed: boolean },
-  ) => {
-    const db = getFirestore();
-    const userTasksRef = doc(db, `users/${userId}/tasks`, date);
+  // const removeCustomTask = async (
+  //   userId: string,
+  //   date: string,
+  //   taskToRemove: { id: number; title: string; completed: boolean },
+  // ) => {
+  //   const db = getFirestore();
+  //   const userTasksRef = doc(db, `users/${userId}/tasks`, date);
 
-    try {
-      await updateDoc(userTasksRef, {
-        customTasks: arrayRemove(taskToRemove),
-      });
-      console.log('Пользовательская задача успешно удалена!');
-    } catch (error) {
-      console.error('Ошибка удаления задачи:', error);
-    }
-  };
+  //   try {
+  //     await updateDoc(userTasksRef, {
+  //       customTasks: arrayRemove(taskToRemove),
+  //     });
+  //     console.log('Пользовательская задача успешно удалена!');
+  //   } catch (error) {
+  //     console.error('Ошибка удаления задачи:', error);
+  //   }
+  // };
 
   const checkProgress = () => {
     const completedTodos = todoList.filter((todo) => todo.completed);
     return Math.round((completedTodos.length / todoList.length) * 100);
   };
 
-  useEffect(() => {
-    if (user) {
-      initializeTasksForToday(user.uid).catch((err) =>
-        console.error('Ошибка инициализации задач:', err),
-      );
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     initializeTasksForToday(user.uid).catch((err) =>
+  //       console.error('Ошибка инициализации задач:', err),
+  //     );
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     setProgress(checkProgress());
@@ -204,10 +197,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                 />
                 <label
                   htmlFor={`todo-${todo.id}`}
-                  className={cn(
-                    todo.completed ? 'line-through' : '',
-                    'cursor-pointer',
-                  )}
+                  className={cn(todo.completed ? 'line-through' : '', 'cursor-pointer')}
                 >
                   {todo.title}
                 </label>
