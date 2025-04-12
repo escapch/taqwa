@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 type AuthGuardProps = {
   isAuthenticated: boolean;
   onLoginClick: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const AuthGuard = ({

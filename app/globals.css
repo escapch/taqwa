@@ -73,7 +73,7 @@ body {
 }
 
 .completed-day::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0.25rem; /* Расположить точку снизу */
   left: 50%;
@@ -85,7 +85,7 @@ body {
 }
 
 .missed-day::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0.25rem; /* Расположить точку снизу */
   left: 50%;
@@ -102,4 +102,19 @@ body {
 
 .light .rdp-root {
   --rdp-accent-color: hsla(var(--primary));
+}
+
+.rdp-day_missed {
+  position: relative;
+}
+.rdp-day_missed::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: red;
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
 }

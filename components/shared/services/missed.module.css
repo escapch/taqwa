@@ -1,0 +1,15 @@
+.dayPicker :global(.missed-day) {
+  position: relative;
+}
+
+.dayPicker :global(.missed-day::after) {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: hsl(0, 84%, 60%);
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
