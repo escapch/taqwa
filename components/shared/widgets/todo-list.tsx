@@ -1,17 +1,17 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { ChevronRight, Delete, SendHorizontal } from "lucide-react";
-import useAuthStore from "@/hooks/useAuth"; // Кастомный хук для проверки авторизации
-import { useModal } from "@/hooks/useModal"; // Zustand для управления модалкой
-import { Button } from "@/components/ui/button";
-import { AuthComponent } from "../auth-component";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { ChevronRight, Delete, SendHorizontal } from 'lucide-react';
+import useAuthStore from '@/hooks/useAuth'; // Кастомный хук для проверки авторизации
+import { useModal } from '@/hooks/useModal'; // Zustand для управления модалкой
+import { Button } from '@/components/ui/button';
+import { AuthComponent } from '../auth-component';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import {
   getFirestore,
   doc,
@@ -19,24 +19,24 @@ import {
   setDoc,
   updateDoc,
   arrayRemove,
-} from "firebase/firestore";
-import { AuthGuard } from "./auth-guard";
+} from 'firebase/firestore';
+import { AuthGuard } from './auth-guard';
 
 interface Props {
   className?: string;
 }
 
 const defaultTasks = [
-  { id: 1, title: "Фаджр", completed: false, must: true, value: "fajr" },
-  { id: 2, title: "Зухр", completed: false, must: true, value: "dhuhr" },
-  { id: 3, title: "Аср", completed: false, must: true, value: "asr" },
-  { id: 4, title: "Магриб", completed: false, must: true, value: "maghrib" },
-  { id: 5, title: "Иша", completed: false, must: true, value: "isha" },
+  { id: 1, title: 'Фаджр', completed: false, must: true, value: 'fajr' },
+  { id: 2, title: 'Зухр', completed: false, must: true, value: 'dhuhr' },
+  { id: 3, title: 'Аср', completed: false, must: true, value: 'asr' },
+  { id: 4, title: 'Магриб', completed: false, must: true, value: 'maghrib' },
+  { id: 5, title: 'Иша', completed: false, must: true, value: 'isha' },
 ];
 
 const initializeTasksForToday = async (userId: string) => {
   const db = getFirestore();
-  const today = new Date().toISOString().split("T")[0]; // Текущая дата
+  const today = new Date().toISOString().split('T')[0]; // Текущая дата
   const userTasksRef = doc(db, `users/${userId}/tasks`, today);
 
   // Проверка наличия задач на сегодня
@@ -58,7 +58,7 @@ const updateTaskStatus = async (
   userId: string,
   date: string,
   taskKey: string,
-  completed: boolean
+  completed: boolean,
 ) => {
   const db = getFirestore();
   const userTasksRef = doc(db, `users/${userId}/tasks`, date);
@@ -72,24 +72,24 @@ const updateTaskStatus = async (
       });
       console.log(`Статус задачи ${taskKey} успешно обновлён на ${completed}`);
     } else {
-      console.error("Задачи не найдены!");
+      console.error('Задачи не найдены!');
     }
   } catch (error) {
-    console.error("Ошибка обновления задачи:", error);
+    console.error('Ошибка обновления задачи:', error);
   }
 };
 
 export const TodoList: React.FC<Props> = ({ className }) => {
   const [todoList, setTodoList] = useState(defaultTasks);
-  const [newTodo, setNewTodo] = useState("");
+  const [newTodo, setNewTodo] = useState('');
   const [progress, setProgress] = useState(0);
   const { user } = useAuthStore();
   const { openModal, isOpen } = useModal();
 
   const toggleTodo = async (id: number) => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     const updatedTodoList = todoList.map((todo) =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
     );
     setTodoList(updatedTodoList);
 
@@ -106,7 +106,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   };
 
   const addTodo = async () => {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     const newTask = {
       id: todoList.length + 1,
       title: newTodo,
@@ -115,7 +115,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
       value: newTodo,
     };
     setTodoList((prev) => [...prev, newTask]);
-    setNewTodo("");
+    setNewTodo('');
 
     // Добавление пользовательской задачи в Firestore
     // const userTasksRef = doc(getFirestore(), `users/${user.uid}/tasks`, today);
@@ -168,13 +168,9 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
   return (
     <>
-      {!user && <AuthGuard isAuthenticated={!!user} onLoginClick={openModal} />}
+      {/* {!user && <AuthGuard isAuthenticated={!!user} onLoginClick={openModal} />} */}
       <Card
-        className={cn(
-          "w-full p-3 flex flex-col gap-6 relative",
-          className,
-          !user && "opacity-50 blur-sm"
-        )}
+        className={cn('w-full p-3 flex flex-col gap-6 relative', className)}
       >
         <div className="flex items-center gap-3 justify-between">
           <p className="text-3xl font-medium">Сегодня</p>
@@ -195,8 +191,8 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                 <label
                   htmlFor={`todo-${todo.id}`}
                   className={cn(
-                    todo.completed ? "line-through" : "",
-                    "cursor-pointer"
+                    todo.completed ? 'line-through' : '',
+                    'cursor-pointer',
                   )}
                 >
                   {todo.title}
@@ -223,7 +219,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
             onClick={() => addTodo()}
           />
         </div>
-        {user && <Button onClick={() => signOut(auth)}>logout</Button>}
+        {/* {user && <Button onClick={() => signOut(auth)}>logout</Button>} */}
       </Card>
       {isOpen && <AuthComponent />}
     </>

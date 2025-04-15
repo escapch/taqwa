@@ -4,7 +4,14 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Container } from '../container';
-import { ChartArea, ChevronRight, CircleUser, HelpCircle } from 'lucide-react';
+import {
+  ChartArea,
+  ChevronRight,
+  CircleUser,
+  HelpCircle,
+  LogOut,
+  LogOutIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -23,17 +30,30 @@ const settings = [
     icon: <HelpCircle />,
     link: '/settings/help',
   },
+
   {
     id: 7,
     name: 'Профиль',
     icon: <CircleUser />,
     link: '/settings/account',
   },
+  {
+    id: 8,
+    name: 'Выйти',
+    icon: <LogOutIcon />,
+    link: '/login',
+  },
 ];
+
 export const Settings: React.FC<Props> = ({ className }) => {
   const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/login');
+  };
+
   return (
-    <Container className="flex flex-col  justify-between gap-5">
+    <Container className="flex flex-col justify-between gap-5">
       <div className="flex items-center gap-3">
         <p className="text-3xl font-medium">Настройки</p>
       </div>
@@ -42,9 +62,7 @@ export const Settings: React.FC<Props> = ({ className }) => {
           <Card
             key={setting.id}
             className="p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-accent dark:hover:bg-accent transition-all duration-100"
-            onClick={() => {
-              router.push(setting.link);
-            }}
+            onClick={() => router.push(setting.link)}
           >
             <div className="flex items-center gap-3">
               {setting.icon}
