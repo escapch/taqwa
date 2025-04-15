@@ -95,3 +95,26 @@ body {
   background-color: red; /* 🔴 Красная точка */
   border-radius: 50%;
 }
+
+.dark .rdp-root {
+  --rdp-accent-color: hsla(var(--primary));
+}
+
+.light .rdp-root {
+  --rdp-accent-color: hsla(var(--primary));
+}
+
+.rdp-day_missed {
+  position: relative;
+}
+.rdp-day_missed::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: red;
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
