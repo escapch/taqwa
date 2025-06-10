@@ -177,12 +177,12 @@ export const TodoList: React.FC<Props> = ({ className }) => {
           <ChevronRight className="text-primary cursor-pointer" />
         </div>
         <Progress value={progress} />
-        <ul className={`space-y-2 px-3 max-h-[250px] overflow-auto `}>
+        <ul className={`space-y-5 px-3 max-h-[250px] overflow-auto `}>
           {todoList.map((todo) => (
             <li key={todo.id} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Checkbox
-                  className="mr-2"
+                  className="mr-2 h-6 w-6"
                   id={`todo-${todo.id}`}
                   checked={todo.completed}
                   onCheckedChange={() => toggleTodo(todo.id)}
@@ -192,7 +192,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                   htmlFor={`todo-${todo.id}`}
                   className={cn(
                     todo.completed ? 'line-through' : '',
-                    'cursor-pointer',
+                    'cursor-pointer text-lg',
                   )}
                 >
                   {todo.title}
