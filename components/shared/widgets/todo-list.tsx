@@ -10,16 +10,6 @@ import useAuthStore from '@/hooks/useAuth'; // Кастомный хук для 
 import { useModal } from '@/hooks/useModal'; // Zustand для управления модалкой
 import { Button } from '@/components/ui/button';
 import { AuthComponent } from '../auth-component';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  arrayRemove,
-} from 'firebase/firestore';
 import { AuthGuard } from './auth-guard';
 
 interface Props {
@@ -34,56 +24,10 @@ const defaultTasks = [
   { id: 5, title: 'Иша', completed: false, must: true, value: 'isha' },
 ];
 
-const initializeTasksForToday = async (userId: string) => {
-  const db = getFirestore();
-  const today = new Date().toISOString().split('T')[0]; // Текущая дата
-  const userTasksRef = doc(db, `users/${userId}/tasks`, today);
-
-  // Проверка наличия задач на сегодня
-  const tasksSnap = await getDoc(userTasksRef);
-  if (!tasksSnap.exists()) {
-    // Создание задач на сегодня
-    await setDoc(userTasksRef, {
-      fajr: defaultTasks[0],
-      dhuhr: defaultTasks[1],
-      asr: defaultTasks[2],
-      maghrib: defaultTasks[3],
-      isha: defaultTasks[4],
-      customTasks: [], // Для пользовательских задач
-    });
-  }
-};
-
-const updateTaskStatus = async (
-  userId: string,
-  date: string,
-  taskKey: string,
-  completed: boolean,
-) => {
-  const db = getFirestore();
-  const userTasksRef = doc(db, `users/${userId}/tasks`, date);
-
-  try {
-    const tasksSnap = await getDoc(userTasksRef);
-    if (tasksSnap.exists()) {
-      const taskField = `${taskKey}.completed`;
-      await updateDoc(userTasksRef, {
-        [taskField]: completed,
-      });
-      console.log(`Статус задачи ${taskKey} успешно обновлён на ${completed}`);
-    } else {
-      console.error('Задачи не найдены!');
-    }
-  } catch (error) {
-    console.error('Ошибка обновления задачи:', error);
-  }
-};
-
 export const TodoList: React.FC<Props> = ({ className }) => {
   const [todoList, setTodoList] = useState(defaultTasks);
   const [newTodo, setNewTodo] = useState('');
   const [progress, setProgress] = useState(0);
-  const { user } = useAuthStore();
   const { openModal, isOpen } = useModal();
 
   const toggleTodo = async (id: number) => {
@@ -92,17 +36,6 @@ export const TodoList: React.FC<Props> = ({ className }) => {
       todo.id === id ? { ...todo, completed: !todo.completed } : todo,
     );
     setTodoList(updatedTodoList);
-
-    // Синхронизация с Firestore
-    // const updatedTodo = updatedTodoList.find((todo) => todo.id === id);
-    // if (updatedTodo) {
-    //   await updateTaskStatus(
-    //     user.uid,
-    //     today,
-    //     updatedTodo.value,
-    //     updatedTodo.completed,
-    //   );
-    // }
   };
 
   const addTodo = async () => {
@@ -116,51 +49,16 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     };
     setTodoList((prev) => [...prev, newTask]);
     setNewTodo('');
-
-    // Добавление пользовательской задачи в Firestore
-    // const userTasksRef = doc(getFirestore(), `users/${user.uid}/tasks`, today);
-    // const tasksSnap = await getDoc(userTasksRef);
-    // if (tasksSnap.exists()) {
-    //   const tasks = tasksSnap.data();
-    //   const updatedCustomTasks = [...(tasks.customTasks || []), newTask];
-    //   await updateDoc(userTasksRef, { customTasks: updatedCustomTasks });
-    // }
   };
 
   const removeTodo = (id: number) => {
     setTodoList((prev) => prev.filter((todo) => todo.id !== id));
   };
 
-  // const removeCustomTask = async (
-  //   userId: string,
-  //   date: string,
-  //   taskToRemove: { id: number; title: string; completed: boolean },
-  // ) => {
-  //   const db = getFirestore();
-  //   const userTasksRef = doc(db, `users/${userId}/tasks`, date);
-
-  //   try {
-  //     await updateDoc(userTasksRef, {
-  //       customTasks: arrayRemove(taskToRemove),
-  //     });
-  //     console.log('Пользовательская задача успешно удалена!');
-  //   } catch (error) {
-  //     console.error('Ошибка удаления задачи:', error);
-  //   }
-  // };
-
   const checkProgress = () => {
     const completedTodos = todoList.filter((todo) => todo.completed);
     return Math.round((completedTodos.length / todoList.length) * 100);
   };
-
-  // useEffect(() => {
-  //   if (user) {
-  //     initializeTasksForToday(user.uid).catch((err) =>
-  //       console.error('Ошибка инициализации задач:', err),
-  //     );
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     setProgress(checkProgress());
@@ -168,7 +66,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
   return (
     <>
-      {/* {!user && <AuthGuard isAuthenticated={!!user} onLoginClick={openModal} />} */}
+      {<AuthGuard isAuthenticated={false} onLoginClick={openModal} />}
       <Card
         className={cn('w-full p-3 flex flex-col gap-6 relative', className)}
       >
