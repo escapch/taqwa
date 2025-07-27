@@ -6,6 +6,7 @@ import { TodoList } from "../widgets/todo-list";
 import { Card } from "@/components/ui/card";
 import { Veсize } from "../widgets/veсize";
 import { ThemeToggle } from "../widgets/theme-toggle";
+import { LoginButton } from "../widgets/login-button";
 
 interface Props {
   className?: string;
@@ -15,9 +16,12 @@ export const Today: React.FC<Props> = ({ className }) => {
   return (
     <div className={cn(className)}>
       <Container className="flex flex-col items-center justify-between gap-5">
-        <Card className="w-full p-2">
+        <Card className="w-full p-2 pb-4 ">
+          <div className="flex justify-between mb-4">
+            <ThemeToggle />
+            <LoginButton />
+          </div>
           <ClockWidget />
-          <ThemeToggle />
         </Card>
         <TodoList />
         <Veсize />

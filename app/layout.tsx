@@ -4,6 +4,8 @@ import "./globals.css";
 import { BottomNavigation } from "@/components/shared/bottom-navigation";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
+import { AuthNotificationsModal } from "@/components/shared/widgets/auth-notifications-modal";
+import { Toaster } from "@/components/ui/sonner";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -27,8 +29,10 @@ export default function RootLayout({
           <AuthProvider />
           <main>
             {children}
+            <AuthNotificationsModal />
             <BottomNavigation />
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

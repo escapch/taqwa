@@ -1,21 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-
-import useAuthStore from "@/hooks/useAuth";
-import { auth } from "@/lib/firebase";
+import { useAuth } from "@/hooks/useAuth";
 
 export const AuthProvider: React.FC = () => {
-  const { signIn, user } = useAuthStore();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      signIn(currentUser);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
+  const { user, loading, isAuthenticated } = useAuth();
 
   return null;
 };

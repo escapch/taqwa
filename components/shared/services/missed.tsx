@@ -12,7 +12,6 @@ import {
   getDocs,
   getFirestore,
 } from "firebase/firestore";
-import useAuthStore from "@/hooks/useAuth";
 import { Card } from "@/components/ui/card";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
@@ -59,7 +58,6 @@ const prayersData: PrayersData = {
 };
 
 export default function Missed() {
-  const { user } = useAuthStore();
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
   const [tasks, setTasks] = useState<PrayersData>(prayersData);
 

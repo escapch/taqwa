@@ -1,6 +1,6 @@
 "use client";
 import { FC } from "react";
-import { X } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -14,7 +14,7 @@ export const Header: FC<Props> = ({ headerTitle, className }) => {
   return (
     <div className="flex items-center justify-between gap-3">
       <p className="text-2xl font-medium">{headerTitle}</p>
-      <X
+      <ChevronLeft
         className="text-primary cursor-pointer"
         onClick={() => router.back()}
       />
