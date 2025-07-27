@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
-import { Container } from '../container';
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Container } from "../container";
 import {
   ChartArea,
   ChevronRight,
@@ -11,8 +10,8 @@ import {
   HelpCircle,
   LogOut,
   LogOutIcon,
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   className?: string;
@@ -20,37 +19,27 @@ interface Props {
 const settings = [
   {
     id: 1,
-    name: 'Статистика',
+    name: "Статистика",
     icon: <ChartArea />,
-    link: '/settings/statistics',
+    link: "/settings/statistics",
   },
   {
     id: 6,
-    name: 'Help',
+    name: "Help",
     icon: <HelpCircle />,
-    link: '/settings/help',
+    link: "/settings/help",
   },
 
   {
     id: 7,
-    name: 'Профиль',
+    name: "Профиль",
     icon: <CircleUser />,
-    link: '/settings/account',
-  },
-  {
-    id: 8,
-    name: 'Выйти',
-    icon: <LogOutIcon />,
-    link: '/login',
+    link: "/settings/account",
   },
 ];
 
 export const Settings: React.FC<Props> = ({ className }) => {
   const router = useRouter();
-
-  const handleLogout = () => {
-    router.push('/login');
-  };
 
   return (
     <Container className="flex flex-col justify-between gap-5">

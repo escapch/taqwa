@@ -1,17 +1,13 @@
-import { create } from "zustand";
+import { useProfileStore } from "@/store/profile";
 
-interface AuthState {
-  isAuthenticated: boolean;
-  user: any | null;
-  signIn: (user: any) => void;
-  signOut: () => void;
-}
+export const useAuth = () => {
+  const user = useProfileStore((state) => state.user);
+  const token = useProfileStore((state) => state.token);
+  const loading = useProfileStore((state) => state.loading);
 
-const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
-  signIn: (user) => set({ isAuthenticated: true, user }),
-  signOut: () => set({ isAuthenticated: false, user: null }),
-}));
-
-export default useAuthStore;
+  return {
+    user,
+    isAuthenticated: !!token && !!user,
+    loading,
+  };
+};
