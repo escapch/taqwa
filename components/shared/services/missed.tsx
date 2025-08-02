@@ -5,93 +5,49 @@ import { Container } from "../container";
 import { Header } from "../widgets/header";
 import "react-calendar-heatmap/dist/styles.css";
 import styles from "./missed.module.css";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-} from "firebase/firestore";
 import { Card } from "@/components/ui/card";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import "react-day-picker/dist/style.css";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Delete } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tasks } from "../widgets/tasks";
-
-interface Prayer {
-  id: number;
-  title: string;
-  completed: boolean;
-  must: boolean;
-}
-
-interface PrayersData {
-  [key: string]: Prayer[];
-}
-
-const prayersData: PrayersData = {
-  "2025-04-12": [
-    { id: 1, title: "Фаджр", completed: true, must: true },
-    { id: 2, title: "Зухр", completed: true, must: true },
-    { id: 3, title: "Аср", completed: true, must: true },
-    { id: 4, title: "Магриб", completed: true, must: true },
-    { id: 5, title: "Иша", completed: true, must: true },
-  ],
-  "2025-04-10": [
-    { id: 1, title: "Фаджр", completed: false, must: true },
-    { id: 2, title: "Зухр", completed: true, must: true },
-    { id: 3, title: "Аср", completed: true, must: true },
-    { id: 4, title: "Магриб", completed: true, must: true },
-    { id: 5, title: "Иша", completed: false, must: true },
-  ],
-};
+import { useFetch } from "@/hooks/useFetch";
+import { defaultTasks, ITasks } from "../widgets/todo-list";
 
 export default function Missed() {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
-  const [tasks, setTasks] = useState<PrayersData>(prayersData);
+  const [missedDays, setMissedDays] = useState();
+  const [taskData, setTaskData] = useState<ITasks[]>(defaultTasks);
+  const { execute } = useFetch("/missed/dates", {
+    method: "GET",
+    auth: true,
+    skip: true,
+  });
 
-  const handleToggleTask = (date: string, taskId: number) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = { ...prevTasks };
-      const dayTasks = [...(updatedTasks[date] || [])];
-      const taskIndex = dayTasks.findIndex((task) => task.id === taskId);
+  const { execute: getSelectedDay } = useFetch("", {
+    method: "GET",
+    auth: true,
+    skip: true,
+  });
 
-      if (taskIndex !== -1) {
-        dayTasks[taskIndex] = {
-          ...dayTasks[taskIndex],
-          completed: !dayTasks[taskIndex].completed,
-        };
-        updatedTasks[date] = dayTasks;
-      }
+  useEffect(() => {
+    const getMissedDays = async () => {
+      const res = await execute();
+      const missedDays = res.map((date: Date) => new Date(date));
+      setMissedDays(missedDays);
+    };
 
-      return updatedTasks;
-    });
-  };
+    getMissedDays();
+  }, []);
 
-  // Определяем дни с пропущенными намазами
-  const missedDays = Object.entries(tasks)
-    .filter(([_, prayers]) =>
-      prayers.some((prayer) => !prayer.completed && prayer.must)
-    )
-    .map(([date]) => new Date(date));
+  const handleDayClick = async (day: Date) => {
+    if (!day) {
+      return null;
+    }
 
-  // Пример данных
-  const missedPrayers = [new Date(2025, 4, 15), new Date(2025, 4, 20)]; // Красные точки
-  const madeUpPrayers = [new Date(2025, 4, 10), new Date(2025, 4, 25)]; // Зелёные точки
-
-  // Обработчик клика по дню
-  const handleDayClick = (day: Date) => {
+    const formattedDate = format(day, "yyyy-MM-dd");
+    const res = await getSelectedDay(undefined, `/task/date/${formattedDate}`);
+    setTaskData(res);
     setSelectedDay(day);
   };
 
@@ -118,13 +74,9 @@ export default function Missed() {
 
       {selectedDay && (
         <Tasks
-          taskData={tasks[format(selectedDay, "yyyy-MM-dd")]}
+          taskData={taskData}
           title={format(selectedDay, "d MMMM yyyy", { locale: ru })}
-          progress={40}
           onClose={() => setSelectedDay(undefined)}
-          onToggleTask={(taskId) =>
-            handleToggleTask(format(selectedDay, "yyyy-MM-dd"), taskId)
-          }
         />
       )}
     </Container>

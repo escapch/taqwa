@@ -9,12 +9,20 @@ import { ChevronRight, Delete, SendHorizontal } from "lucide-react";
 import { useFetch } from "@/hooks/useFetch";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Taskslist } from "./tasks-list";
 
 interface Props {
   className?: string;
 }
 
-const defaultTasks = [
+export interface ITasks {
+  _id: number;
+  title: string;
+  isCompleted: boolean;
+  type: string;
+}
+
+export const defaultTasks = [
   { _id: 1, title: "Фаджр", isCompleted: false, type: "fard" },
   { _id: 2, title: "Зухр", isCompleted: false, type: "fard" },
   { _id: 3, title: "Аср", isCompleted: false, type: "fard" },
@@ -27,9 +35,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   const [newTodo, setNewTodo] = useState("");
   const [progress, setProgress] = useState(0);
   const { isAuthenticated } = useAuth();
-  const { execute, data } = useFetch<
-    { _id: number; title: string; isCompleted: boolean; type: string }[]
-  >("/task/today", {
+  const { execute, data } = useFetch<ITasks[]>("/task/today", {
     method: "GET",
     auth: true,
     skip: true,
@@ -57,7 +63,6 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    console.log("accessToken", data);
     if (data) {
       setTodoList(data);
     }
@@ -116,36 +121,11 @@ export const TodoList: React.FC<Props> = ({ className }) => {
           <ChevronRight className="text-primary cursor-pointer" />
         </div>
         <Progress value={progress} />
-        <ul className={`space-y-5 px-3 max-h-[250px] overflow-auto `}>
-          {todoList.map((todo) => (
-            <li key={todo._id} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  className="mr-2 h-6 w-6"
-                  id={`todo-${todo._id}`}
-                  checked={todo.isCompleted}
-                  onCheckedChange={() => toggleTodo(todo._id)}
-                  value={todo.title}
-                />
-                <label
-                  htmlFor={`todo-${todo._id}`}
-                  className={cn(
-                    todo.isCompleted ? "line-through" : "",
-                    "cursor-pointer text-lg"
-                  )}
-                >
-                  {todo.title}
-                </label>
-              </div>
-              {todo.type !== "fard" && (
-                <Delete
-                  className="cursor-pointer text-red-500"
-                  onClick={() => removeTodo(todo._id)}
-                />
-              )}
-            </li>
-          ))}
-        </ul>
+        <Taskslist
+          taskData={todoList}
+          onDelete={removeTodo}
+          toggleTodo={toggleTodo}
+        />
         <div className="relative w-full">
           <Input
             placeholder="Добавить задачу..."

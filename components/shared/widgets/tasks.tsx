@@ -1,22 +1,53 @@
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { Delete, X } from "lucide-react";
+import { X } from "lucide-react";
+import { Taskslist } from "./tasks-list";
+import { useEffect, useState } from "react";
+import { useFetch } from "@/hooks/useFetch";
+import { toast } from "sonner";
+import { defaultTasks, ITasks } from "./todo-list";
 
 export const Tasks = ({
   taskData,
   title,
-  progress,
   onClose,
-  onToggleTask,
 }: {
-  taskData: any;
+  taskData: ITasks[];
   title: string;
-  progress: number;
   onClose: () => void;
-  onToggleTask: (taskId: number) => void;
 }) => {
+  const [progress, setProgress] = useState(0);
+  const [todoList, setTodoList] = useState(defaultTasks);
+
+  const { execute: toggleTask } = useFetch("", {
+    method: "PATCH",
+    auth: true,
+    skip: true,
+  });
+
+  const checkProgress = () => {
+    const completedTodos = taskData.filter((todo: ITasks) => todo.isCompleted);
+    return Math.round((completedTodos.length / taskData.length) * 100);
+  };
+
+  const toggleTodo = async (id: number) => {
+    const updatedTodoList = todoList.map((todo) =>
+      todo._id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+    );
+    setTodoList(updatedTodoList);
+    try {
+      await toggleTask(undefined, `/task/${id}/toggle`);
+    } catch (err) {
+      toast.error("Произошла ошибка, попробуйте еще раз");
+    }
+  };
+
+  useEffect(() => {
+    setTodoList(taskData);
+    setProgress(checkProgress());
+  }, [taskData]);
+
   return (
     <Card className={cn("w-full p-3 flex flex-col gap-6 relative")}>
       <div className="flex items-center gap-3 justify-between">
@@ -29,36 +60,7 @@ export const Tasks = ({
       {taskData ? (
         <>
           <Progress value={progress} />
-          <ul className={`space-y-2 px-3 max-h-[250px] overflow-auto `}>
-            {taskData.map((todo: any) => (
-              <li key={todo.id} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    className="mr-2"
-                    id={`todo-${todo.id}`}
-                    checked={todo.completed}
-                    onCheckedChange={() => onToggleTask(todo.id)}
-                    value={todo.value}
-                  />
-                  <label
-                    htmlFor={`todo-${todo.id}`}
-                    className={cn(
-                      todo.completed ? "line-through" : "",
-                      "cursor-pointer"
-                    )}
-                  >
-                    {todo.title}
-                  </label>
-                </div>
-                {!todo.must && (
-                  <Delete
-                    className="cursor-pointer text-red-500"
-                    // onClick={() => removeTodo(todo.id)}
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
+          <Taskslist taskData={todoList} toggleTodo={toggleTodo} />
         </>
       ) : (
         <p className="text-center text-gray-500">

@@ -1,10 +1,10 @@
-import { Container } from '@/components/shared/container';
-import Missed from '@/components/shared/services/missed';
+import Missed from "@/components/shared/services/missed";
+import { Suspense } from "react";
 
 export default function page() {
   return (
-    <div>
+    <Suspense>
       <Missed />
-    </div>
+    </Suspense>
   );
 }

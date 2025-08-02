@@ -15,6 +15,8 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "Taqwa",
   description: "app for every muslims",
+  manifest: "/manifest.json",
+  themeColor: "#09090b",
 };
 
 export default function RootLayout({
