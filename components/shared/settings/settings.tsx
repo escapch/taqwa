@@ -1,17 +1,9 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Container } from "../container";
-import {
-  ChartArea,
-  ChevronRight,
-  CircleUser,
-  HelpCircle,
-  LogOut,
-  LogOutIcon,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Card } from '@/components/ui/card';
+import { Container } from '../container';
+import { ChartArea, ChevronRight, CircleUser, HelpCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   className?: string;
@@ -19,22 +11,22 @@ interface Props {
 const settings = [
   {
     id: 1,
-    name: "Статистика",
+    name: 'Статистика',
     icon: <ChartArea />,
-    link: "/settings/statistics",
+    link: '/settings/stats',
   },
   {
     id: 6,
-    name: "Help",
+    name: 'Help',
     icon: <HelpCircle />,
-    link: "/settings/help",
+    link: '/settings/help',
   },
 
   {
     id: 7,
-    name: "Профиль",
+    name: 'Профиль',
     icon: <CircleUser />,
-    link: "/settings/account",
+    link: '/settings/account',
   },
 ];
 

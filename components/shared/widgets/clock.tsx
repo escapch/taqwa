@@ -3,6 +3,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Props {
   className?: string;
@@ -35,8 +36,16 @@ export const ClockWidget: React.FC<Props> = ({ className }) => {
 
   return (
     <div className="flex flex-col items-center justify-center ">
-      <div className="text-md opacity-70">{date}</div>
-      <div className="text-6xl font-bold">{time}</div>
+      {date && time ? (
+        <>
+          <div className="text-md opacity-70">{date}</div>
+          <div className="text-6xl font-bold">{time}</div>
+        </>
+      ) : (
+        <div className="flex flex-col space-y-3">
+          <Skeleton className="h-[100px] w-[250px] rounded-xl" />
+        </div>
+      )}
     </div>
   );
 };

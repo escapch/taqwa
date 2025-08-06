@@ -49,13 +49,13 @@ export function useFetch<TResponse = any, TBody = any>(
           }
         );
 
+        if (res.status === 401) {
+          router.push("/login");
+        }
+
         if (!res.ok) {
           const errText = await res.text();
           throw new Error(errText || `Ошибка запроса: ${res.status}`);
-        }
-
-        if (res.status === 401) {
-          router.push("/login");
         }
 
         const json = await res.json();

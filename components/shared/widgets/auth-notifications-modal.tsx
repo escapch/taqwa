@@ -1,23 +1,25 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+} from '@/components/ui/dialog';
+import { useAuth } from '@/hooks/useAuth';
+import { usePathname, useRouter } from 'next/navigation';
+import { FC, useEffect, useState } from 'react';
 
 export const AuthNotificationsModal: FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const pathname = usePathname();
+  const isLoginRegister = pathname === '/login' || pathname === '/register';
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || isLoginRegister) {
       const timer = setTimeout(() => {
         setOpen(true);
       }, 10000);
@@ -31,10 +33,9 @@ export const AuthNotificationsModal: FC = () => {
         <DialogHeader>
           <DialogTitle>Сохраняйте Ваши задачи</DialogTitle>
           <DialogDescription>
-            Чтобы сохранить созданные задачи и получать к ним доступ с любого
-            устройства, пожалуйста, войдите в аккаунт или зарегистрируйтесь. Это
-            позволит Вам не потерять прогресс и продолжить работу в любое
-            удобное время.
+            Чтобы сохранить созданные задачи и получать к ним доступ с любого устройства,
+            пожалуйста, войдите в аккаунт или зарегистрируйтесь. Это позволит Вам не потерять
+            прогресс и продолжить работу в любое удобное время.
           </DialogDescription>
         </DialogHeader>
 
@@ -45,7 +46,7 @@ export const AuthNotificationsModal: FC = () => {
           <Button
             onClick={() => {
               setOpen(false);
-              router.push("/login");
+              router.push('/login');
             }}
           >
             Войти
