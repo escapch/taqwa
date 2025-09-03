@@ -19,7 +19,7 @@ export const AuthNotificationsModal: FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated || isLoginRegister) {
+    if (!isAuthenticated && !isLoginRegister) {
       const timer = setTimeout(() => {
         setOpen(true);
       }, 10000);
@@ -33,9 +33,10 @@ export const AuthNotificationsModal: FC = () => {
         <DialogHeader>
           <DialogTitle>Сохраняйте Ваши задачи</DialogTitle>
           <DialogDescription>
-            Чтобы сохранить созданные задачи и получать к ним доступ с любого устройства,
-            пожалуйста, войдите в аккаунт или зарегистрируйтесь. Это позволит Вам не потерять
-            прогресс и продолжить работу в любое удобное время.
+            Чтобы сохранить созданные задачи и получать к ним доступ с любого
+            устройства, пожалуйста, войдите в аккаунт или зарегистрируйтесь. Это
+            позволит Вам не потерять прогресс и продолжить работу в любое
+            удобное время.
           </DialogDescription>
         </DialogHeader>
 

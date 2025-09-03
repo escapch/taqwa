@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Container } from '../container';
 import { ChartArea, ChevronRight, CircleUser, HelpCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '../widgets/theme-toggle';
 
 interface Props {
   className?: string;
@@ -52,6 +53,7 @@ export const Settings: React.FC<Props> = ({ className }) => {
             <ChevronRight className="text-primary cursor-pointer" />
           </Card>
         ))}
+        <ThemeToggle />
       </div>
     </Container>
   );
