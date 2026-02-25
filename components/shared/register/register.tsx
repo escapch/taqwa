@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetch } from "@/hooks/useFetch";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useProfileStore } from "@/store/profile";
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: "Имя должно быть не менее 2 символов" }),
@@ -30,6 +31,7 @@ export default function Register() {
   });
 
   const router = useRouter();
+  const { logIn } = useProfileStore();
 
   const { execute, loading } = useFetch<{ accessToken: string }>(
     "/auth/register",
@@ -39,11 +41,19 @@ export default function Register() {
     }
   );
 
+
   const onSubmit = async (data: RegisterFormData) => {
-    const res = await execute(data);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const res = await execute({
+      ...data,
+      timezone,
+    });
+
     if (res?.accessToken) {
+      await logIn({ email: data.email, password: data.password });
       toast.success("Успешная регистрация!");
-      router.push("/login");
+      router.push("/register/setup");
     } else {
       toast.error("Не удалось зарегистрироваться");
     }
