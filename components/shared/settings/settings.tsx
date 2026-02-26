@@ -35,7 +35,7 @@ export const Settings: React.FC<Props> = ({ className }) => {
   const router = useRouter();
 
   return (
-    <Container className="flex flex-col justify-between gap-5">
+    <Container className="flex flex-col justify-between gap-5 pt-10">
       <div className="flex items-center gap-3">
         <p className="text-3xl font-medium">Настройки</p>
       </div>

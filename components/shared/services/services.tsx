@@ -23,7 +23,7 @@ const services = [
 export const Services: React.FC<Props> = ({ className }) => {
   const router = useRouter();
   return (
-    <div className={cn('flex flex-col gap-5', className)}>
+    <div className={cn('flex flex-col gap-5 pt-10', className)}>
       <p className="text-3xl font-medium">Сервисы</p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 ">
         {services.map((service, index) => (

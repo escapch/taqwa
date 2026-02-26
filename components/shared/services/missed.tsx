@@ -52,7 +52,7 @@ export default function Missed() {
   };
 
   return (
-    <Container className="flex flex-col  justify-between gap-5">
+    <Container className="flex flex-col  justify-between gap-5 pt-10">
       <Header headerTitle="Пропущенные намазы" />
       <Card className="p-6 flex justify-center">
         {missedDays ? (

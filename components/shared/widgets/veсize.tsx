@@ -33,11 +33,15 @@ export const Veсize: React.FC<Props> = ({ className }) => {
   };
 
   return (
-    <Card className={cn('w-full p-3', className)}>
-      <p className="text-base font-medium">{vecizeData[currentIndex].text}</p>
-      <span className="text-xs text-muted-foreground">
-        — {vecizeData[currentIndex].source}
-      </span>
+    <Card className={cn('w-full p-3 flex justify-between gap-2', className)}>
+      <div className="flex flex-col gap-2">
+        <p className="text-base font-medium">
+          {vecizeData[currentIndex].text}
+          <span className="text-xs text-muted-foreground">
+            {' '}— {vecizeData[currentIndex].source}
+          </span>
+        </p>
+      </div>
       <div className="flex justify-end">
         <RefreshCcw
           className="text-primary cursor-pointer"

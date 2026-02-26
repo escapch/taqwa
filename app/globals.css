@@ -9,7 +9,7 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 140 20% 96%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -21,25 +21,34 @@ body {
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
+    --accent: 240 5% 96%; /* Светлый нейтрально-серый */
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 142.1 76.2% 36.3%;
-    --radius: 0.5rem;
+    --radius: 1.25rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Glass variables */
+    --glass-bg: rgba(255, 255, 255, 0.60);
+    --glass-border: rgba(255, 255, 255, 0.80);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --glass-blur: 20px;
+
+    /* Background gradient */
+    --bg-gradient: linear-gradient(145deg, hsl(0 0% 98%), hsl(240 5% 96%), hsl(240 10% 94%));
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 220 20% 8%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 220 15% 12%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
@@ -49,7 +58,7 @@ body {
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
+    --accent: 240 4% 16%; /* Темный нейтрально-серый */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
@@ -61,6 +70,15 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Glass variables dark */
+    --glass-bg: rgba(30, 35, 45, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0,0,0,0.2);
+    --glass-blur: 20px;
+
+    /* Background gradient dark */
+    --bg-gradient: linear-gradient(145deg, hsl(220 20% 8%), hsl(210 22% 10%), hsl(200 18% 9%));
   }
 }
 
@@ -68,32 +86,62 @@ body {
   * {
     @apply border-border;
   }
+  html {
+    height: 100%;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: var(--bg-gradient);
+    min-height: 100dvh;
   }
 }
 
+/* ===== LIQUID GLASS UTILITIES ===== */
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(2);
+    -webkit-backdrop-filter: blur(30px) saturate(2);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .glass-nav {
+    backdrop-filter: blur(24px) saturate(2);
+    -webkit-backdrop-filter: blur(24px) saturate(2);
+  }
+}
+
+/* ===== CALENDAR DOT INDICATORS ===== */
 .completed-day::after {
   content: "";
   position: absolute;
-  bottom: 0.25rem; /* Расположить точку снизу */
+  bottom: 0.25rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: green; /* 🟢 Зелёная точка */
+  width: 0.4rem;
+  height: 0.4rem;
+  background-color: hsl(142.1 76.2% 36.3%);
   border-radius: 50%;
 }
 
 .missed-day::after {
   content: "";
   position: absolute;
-  bottom: 0.25rem; /* Расположить точку снизу */
+  bottom: 0.25rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: red; /* 🔴 Красная точка */
+  width: 0.4rem;
+  height: 0.4rem;
+  background-color: hsl(0 84.2% 60.2%);
   border-radius: 50%;
 }
 
@@ -110,12 +158,12 @@ body {
 }
 .rdp-day_missed::after {
   content: "";
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background-color: red;
+  background-color: hsl(0 84.2% 60.2%);
   position: absolute;
-  bottom: 5px;
+  bottom: 4px;
   left: 50%;
   transform: translateX(-50%);
 }

@@ -30,7 +30,7 @@ export const Stats: FC<Props> = ({ className }) => {
   }, []);
 
   return (
-    <Container className="flex flex-col justify-between gap-5">
+    <Container className="flex flex-col justify-between gap-5 pt-10">
       <Header headerTitle="Статистика" />
       {data ? (
         <StatsChart data={data} />
