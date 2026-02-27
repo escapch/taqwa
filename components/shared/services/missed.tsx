@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Container } from '../container';
 import { Header } from '../widgets/header';
 import 'react-calendar-heatmap/dist/styles.css';
@@ -13,12 +13,30 @@ import { Tasks } from '../widgets/tasks';
 import { useFetch } from '@/hooks/useFetch';
 import { defaultTasks, ITasks } from '../widgets/todo-list';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/hooks/useAuth';
 
-export default function Missed() {
+export interface IUserExtended {
+  id: string;
+  name: string;
+  email: string;
+  registeredAt?: string;
+  avatar?: string;
+}
+
+export const Missed: FC = () => {
+  const { user } = useAuth();
   const [selectedDay, setSelectedDay] = useState<Date | undefined>();
-  const [missedDays, setMissedDays] = useState();
+  const [missedDays, setMissedDays] = useState<Date[]>();
+  const [completedDays, setCompletedDays] = useState<Date[]>();
   const [taskData, setTaskData] = useState<ITasks[]>(defaultTasks);
+
   const { execute } = useFetch('/missed/dates', {
+    method: 'GET',
+    auth: true,
+    skip: true,
+  });
+
+  const { execute: fetchCompleted } = useFetch('/missed/completed-dates', {
     method: 'GET',
     auth: true,
     skip: true,
@@ -31,14 +49,26 @@ export default function Missed() {
   });
 
   useEffect(() => {
-    const getMissedDays = async () => {
-      const res = await execute();
-      const missedDays = res.map((date: Date) => new Date(date));
-      setMissedDays(missedDays);
+    const fetchData = async () => {
+      const [missedRes, completedRes] = await Promise.all([
+        execute(),
+        fetchCompleted(),
+      ]);
+
+      if (missedRes) {
+        setMissedDays(missedRes.map((date: string) => new Date(date)));
+      }
+      if (completedRes) {
+        setCompletedDays(completedRes.map((date: string) => new Date(date)));
+      }
     };
 
-    getMissedDays();
+    fetchData();
   }, []);
+
+  const registeredDate = (user as unknown as IUserExtended)?.registeredAt
+    ? new Date((user as unknown as IUserExtended).registeredAt!)
+    : undefined;
 
   const handleDayClick = async (day: Date) => {
     if (!day) {
@@ -54,23 +84,43 @@ export default function Missed() {
   return (
     <Container className="flex flex-col  justify-between gap-5 pt-10">
       <Header headerTitle="Пропущенные намазы" />
-      <Card className="p-6 flex justify-center">
+      <Card className="p-6 flex flex-col items-center">
         {missedDays ? (
-          <DayPicker
-            animate
-            mode="single"
-            locale={ru}
-            timeZone="Asia/Bishkek"
-            onDayClick={handleDayClick}
-            weekStartsOn={1}
-            modifiers={{
-              missed: missedDays,
-            }}
-            className={styles.dayPicker}
-            modifiersClassNames={{
-              missed: 'missed-day',
-            }}
-          />
+          <>
+            <DayPicker
+              animate
+              mode="single"
+              locale={ru}
+              timeZone="Asia/Bishkek"
+              onDayClick={handleDayClick}
+              weekStartsOn={1}
+              modifiers={{
+                missed: missedDays || [],
+                completed: completedDays || [],
+                registered: registeredDate ? [registeredDate] : [],
+              }}
+              className={styles.dayPicker}
+              modifiersClassNames={{
+                missed: 'missed-day',
+                completed: 'completed-day',
+                registered: 'registered-day',
+              }}
+            />
+            <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 pt-6 border-t text-sm font-medium text-muted-foreground w-full">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[hsl(142,76%,36%)]" />
+                <span>Все прочитано</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[hsl(0,84%,60%)]" />
+                <span>Есть пропуски</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 flex items-center justify-center border border-dashed border-primary rounded-md" />
+                <span>День регистрации</span>
+              </div>
+            </div>
+          </>
         ) : (
           <Skeleton className="h-[300px] w-full rounded-xl" />
         )}
@@ -84,5 +134,5 @@ export default function Missed() {
         />
       )}
     </Container>
-  );
+  )
 }

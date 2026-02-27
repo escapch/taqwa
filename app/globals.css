@@ -78,7 +78,8 @@ body {
     --glass-blur: 20px;
 
     /* Background gradient dark */
-    --bg-gradient: linear-gradient(145deg, hsl(220 20% 8%), hsl(210 22% 10%), hsl(200 18% 9%));
+    /* --bg-gradient: linear-gradient(145deg, hsl(220 20% 8%), hsl(210 22% 10%), hsl(200 18% 9%)); */
+    --bg-gradient: "#000";
   }
 }
 

@@ -14,12 +14,13 @@ import { FC, useEffect, useState } from 'react';
 export const AuthNotificationsModal: FC = () => {
   const { user, isAuthenticated } = useAuth();
   const pathname = usePathname();
-  const isLoginRegister = pathname === '/login' || pathname === '/register';
+  const authPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
+  const isAuthPage = authPaths.includes(pathname);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoginRegister) {
+    if (!isAuthenticated && !isAuthPage) {
       const timer = setTimeout(() => {
         setOpen(true);
       }, 10000);

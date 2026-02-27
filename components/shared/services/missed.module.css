@@ -13,3 +13,28 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+.dayPicker :global(.completed-day) {
+  position: relative;
+}
+
+.dayPicker :global(.completed-day::after) {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: hsl(142, 76%, 36%);
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dayPicker :global(.registered-day) {
+  border: 1px dashed hsl(var(--primary));
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
