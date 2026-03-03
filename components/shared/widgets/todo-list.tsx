@@ -1,15 +1,15 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { ChevronRight, Delete, SendHorizontal } from "lucide-react";
-import { useFetch } from "@/hooks/useFetch";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { Taskslist } from "./tasks-list";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { ChevronRight, Delete, SendHorizontal } from 'lucide-react';
+import { useFetch } from '@/hooks/useFetch';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { Taskslist } from './tasks-list';
 
 interface Props {
   className?: string;
@@ -23,35 +23,38 @@ export interface ITasks {
 }
 
 export const defaultTasks = [
-  { _id: 1, title: "Фаджр", isCompleted: false, type: "fard" },
-  { _id: 2, title: "Зухр", isCompleted: false, type: "fard" },
-  { _id: 3, title: "Аср", isCompleted: false, type: "fard" },
-  { _id: 4, title: "Магриб", isCompleted: false, type: "fard" },
-  { _id: 5, title: "Иша", isCompleted: false, type: "fard" },
+  { _id: 1, title: 'Фаджр', isCompleted: false, type: 'fard' },
+  { _id: 2, title: 'Зухр', isCompleted: false, type: 'fard' },
+  { _id: 3, title: 'Аср', isCompleted: false, type: 'fard' },
+  { _id: 4, title: 'Магриб', isCompleted: false, type: 'fard' },
+  { _id: 5, title: 'Иша', isCompleted: false, type: 'fard' },
 ];
 
 export const TodoList: React.FC<Props> = ({ className }) => {
-  const [todoList, setTodoList] = useState(defaultTasks);
-  const [newTodo, setNewTodo] = useState("");
+  const [newTodo, setNewTodo] = useState('');
   const [progress, setProgress] = useState(0);
   const { isAuthenticated } = useAuth();
-  const { execute, data } = useFetch<ITasks[]>("/task/today", {
-    method: "GET",
+  const [todoList, setTodoList] = useState<ITasks[]>(
+    isAuthenticated ? [] : defaultTasks,
+  );
+
+  const { execute, data } = useFetch<ITasks[]>('/task/today', {
+    method: 'GET',
     auth: true,
     skip: true,
   });
-  const { execute: toggleTask } = useFetch("", {
-    method: "PATCH",
+  const { execute: toggleTask } = useFetch('', {
+    method: 'PATCH',
     auth: true,
     skip: true,
   });
-  const { execute: deleteTask } = useFetch("", {
-    method: "DELETE",
+  const { execute: deleteTask } = useFetch('', {
+    method: 'DELETE',
     auth: true,
     skip: true,
   });
-  const { execute: addCustomTask } = useFetch("/task/custom", {
-    method: "POST",
+  const { execute: addCustomTask } = useFetch('/task/custom', {
+    method: 'POST',
     auth: true,
     skip: true,
   });
@@ -69,14 +72,19 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   }, [data]);
 
   const toggleTodo = async (id: number) => {
-    const updatedTodoList = todoList.map((todo) =>
-      todo._id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+    const previousList = todoList;
+
+    setTodoList((prev) =>
+      prev.map((todo) =>
+        todo._id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo,
+      ),
     );
-    setTodoList(updatedTodoList);
+
     try {
       await toggleTask(undefined, `/task/${id}/toggle`);
     } catch (err) {
-      toast.error("Произошла ошибка, попробуйте еще раз");
+      setTodoList(previousList);
+      toast.error('Произошла ошибка, попробуйте еще раз');
     }
   };
 
@@ -84,9 +92,8 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     setTodoList((prev) => prev.filter((todo) => todo._id !== id));
     try {
       await deleteTask(undefined, `/task/${id}`);
-      await execute();
     } catch (error) {
-      toast.error("Произошла ошибка, попробуйте еще раз");
+      toast.error('Произошла ошибка, попробуйте еще раз');
     }
   };
 
@@ -96,9 +103,9 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         await addCustomTask({ title: newTodo });
         await execute();
       } catch (err) {
-        toast.error("Произошла ошибка, попробуйте еще раз");
+        toast.error('Произошла ошибка, попробуйте еще раз');
       } finally {
-        setNewTodo("");
+        setNewTodo('');
       }
     }
   };
@@ -114,7 +121,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   return (
     <>
       <Card
-        className={cn("w-full p-3 flex flex-col gap-6 relative", className)}
+        className={cn('w-full p-3 flex flex-col gap-6 relative', className)}
       >
         <div className="flex items-center gap-3 justify-between">
           <p className="text-3xl font-medium">Сегодня</p>

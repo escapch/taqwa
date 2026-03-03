@@ -2,7 +2,13 @@
 
 import { Card } from '@/components/ui/card';
 import { Container } from '../container';
-import { ChartArea, ChevronRight, CircleUser, HelpCircle } from 'lucide-react';
+import {
+  ChartArea,
+  ChevronRight,
+  CircleUser,
+  Divide,
+  HelpCircle,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '../widgets/theme-toggle';
 
@@ -43,7 +49,7 @@ export const Settings: React.FC<Props> = ({ className }) => {
         {settings.map((setting) => (
           <Card
             key={setting.id}
-            className="p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-accent dark:hover:bg-accent transition-all duration-100"
+            className="rounded-full p-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-accent dark:hover:bg-accent transition-all duration-100"
             onClick={() => router.push(setting.link)}
           >
             <div className="flex items-center gap-3">
