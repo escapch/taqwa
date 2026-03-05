@@ -13,7 +13,7 @@ export const Header: FC<Props> = ({ headerTitle, className }) => {
 
   return (
     <div className="flex items-center gap-4 mb-2">
-      <div 
+      <div
         onClick={() => router.back()}
         className="
           flex items-center justify-center w-10 h-10 rounded-full cursor-pointer

@@ -34,9 +34,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   const [newTodo, setNewTodo] = useState('');
   const [progress, setProgress] = useState(0);
   const { isAuthenticated } = useAuth();
-  const [todoList, setTodoList] = useState<ITasks[]>(
-    isAuthenticated ? [] : defaultTasks,
-  );
+  const [todoList, setTodoList] = useState<ITasks[]>(defaultTasks);
 
   const { execute, data } = useFetch<ITasks[]>('/task/today', {
     method: 'GET',

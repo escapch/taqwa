@@ -5,12 +5,24 @@ interface IUser {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  registeredAt?: string;
+  timezone?: string;
+  location?: { latitude: number; longitude: number };
 }
 
 interface IUserCredentials {
   email: string;
   password: string;
+}
+
+interface IUpdateProfileData {
+  name?: string;
+  email?: string;
+}
+
+interface IChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
 }
 
 interface IProfileState {
@@ -21,6 +33,10 @@ interface IProfileState {
   signIn: (credentials: IUserCredentials) => Promise<boolean>;
   logOut: () => void;
   getUser: () => IUser | null;
+  updateProfile: (data: IUpdateProfileData) => Promise<boolean>;
+  changePassword: (data: IChangePasswordData) => Promise<boolean>;
+  deleteAccount: () => Promise<boolean>;
+  deleteLocation: () => Promise<boolean>;
 }
 
 export const useProfileStore = create<IProfileState>()(
@@ -102,9 +118,135 @@ export const useProfileStore = create<IProfileState>()(
         set({ token: null, user: null });
         localStorage.removeItem("profile");
       },
+
+      updateProfile: async (data) => {
+        const token = get().token;
+        if (!token) return false;
+
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/me`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(data),
+            }
+          );
+
+          if (!res.ok) throw new Error("Update failed");
+
+          const updatedUser = await res.json();
+          set({
+            user: {
+              ...(get().user as IUser),
+              id: updatedUser.userId,
+              name: updatedUser.name,
+              email: updatedUser.email,
+              registeredAt: updatedUser.registeredAt,
+              timezone: updatedUser.timezone,
+            },
+          });
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
+
+      changePassword: async (data) => {
+        const token = get().token;
+        if (!token) return false;
+
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/me/password`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(data),
+            }
+          );
+
+          if (!res.ok) throw new Error("Password change failed");
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
+
+      deleteAccount: async () => {
+        const token = get().token;
+        if (!token) return false;
+
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/me`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!res.ok) throw new Error("Delete failed");
+
+          set({ token: null, user: null });
+          localStorage.removeItem("profile");
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
+
+      deleteLocation: async () => {
+        const token = get().token;
+        if (!token) return false;
+
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/location`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!res.ok) throw new Error("Delete location failed");
+
+          const user = get().user;
+          if (user) {
+            set({
+              user: {
+                ...user,
+                location: undefined,
+              },
+            });
+          }
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
     }),
     {
       name: "profile",
     }
   )
 );
+
