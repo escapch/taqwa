@@ -21,7 +21,6 @@ export const AuthNotificationsModal: FC = () => {
     '/reset-password',
     '/verify-email',
   ];
-  console.log('path', pathname);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -35,7 +34,7 @@ export const AuthNotificationsModal: FC = () => {
     }
   }, [user]);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={false} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Сохраняйте Ваши задачи</DialogTitle>

@@ -17,10 +17,12 @@ interface Props {
     className?: string;
     prayerTimes: Record<string, string>;
     userTimezone: string;
+    onTimerUpdate?: (nextPrayer: string, timeLeft: string) => void;
+    render?: (nextPrayer: string, h: string, m: string, s: string) => React.ReactNode;
 }
 
-export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userTimezone }) => {
-    const [timeLeft, setTimeLeft] = useState<string>('');
+export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userTimezone, onTimerUpdate, render }) => {
+    const [timeLeft, setTimeLeft] = useState<{ h: string, m: string, s: string } | null>(null);
     const [nextPrayerName, setNextPrayerName] = useState<string>('');
 
     const prayers = useMemo(() => [
@@ -50,11 +52,10 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
                 if (now.isBefore(prayerDateTime)) {
                     nextPrayer = prayer.name;
                     nextPrayerTime = prayerDateTime;
-                    break; // Found the next prayer today
+                    break;
                 }
             }
 
-            // If no prayer is left today, the next prayer is Fajr tomorrow
             if (!nextPrayer && prayerTimes.Fajr) {
                 nextPrayer = prayers[0].name;
                 nextPrayerTime = dayjs.tz(`${todayDateStr} ${prayerTimes.Fajr}`, 'YYYY-MM-DD HH:mm', userTimezone).add(1, 'day');
@@ -64,31 +65,28 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
                 setNextPrayerName(nextPrayer);
                 const diffMs = nextPrayerTime.diff(now);
 
-                if (diffMs <= 0) {
-                    setTimeLeft('00:00:00');
-                } else {
-                    const duration = dayjs.duration(diffMs);
-                    const hours = Math.floor(duration.asHours()).toString().padStart(2, '0');
-                    const minutes = duration.minutes().toString().padStart(2, '0');
-                    const seconds = duration.seconds().toString().padStart(2, '0');
-                    setTimeLeft(`${hours}:${minutes}:${seconds}`);
-                }
+                const dur = dayjs.duration(diffMs);
+                const h = Math.floor(dur.asHours()).toString().padStart(2, '0');
+                const m = dur.minutes().toString().padStart(2, '0');
+                const s = dur.seconds().toString().padStart(2, '0');
+
+                const formattedTime = h !== '00' ? `${h}:${m}:${s}` : `${m}:${s}`;
+                setTimeLeft({ h, m, s });
+                if (onTimerUpdate) onTimerUpdate(nextPrayer, formattedTime);
             }
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [prayerTimes, prayers, userTimezone]);
+    }, [prayerTimes, prayers, userTimezone, onTimerUpdate]);
 
-    if (!timeLeft) {
-        return null;
-    }
+    if (!timeLeft) return null;
+
+    if (render) return render(nextPrayerName, timeLeft.h, timeLeft.m, timeLeft.s);
 
     return (
-        <div className={cn("flex flex-col items-center justify-center p-6 bg-primary/10 rounded-2xl border border-primary/20", className)}>
-            <h3 className="text-lg font-medium text-muted-foreground mb-2">До {nextPrayerName} осталось</h3>
-            <div className="text-5xl font-bold tracking-tight text-primary font-mono">
-                {timeLeft}
-            </div>
+        <div className={cn("text-center", className)}>
+            <span className="text-sm font-medium opacity-60">До {nextPrayerName} осталось</span>
+            <div className="text-4xl font-bold">{timeLeft.h !== '00' ? `${timeLeft.h}:` : ''}{timeLeft.m}:{timeLeft.s}</div>
         </div>
     );
 };
