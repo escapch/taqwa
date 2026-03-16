@@ -34,6 +34,7 @@ interface IProfileState {
   logOut: () => void;
   getUser: () => IUser | null;
   updateProfile: (data: IUpdateProfileData) => Promise<boolean>;
+  fetchMe: () => Promise<boolean>;
   changePassword: (data: IChangePasswordData) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
   deleteLocation: () => Promise<boolean>;
@@ -147,9 +148,37 @@ export const useProfileStore = create<IProfileState>()(
               email: updatedUser.email,
               registeredAt: updatedUser.registeredAt,
               timezone: updatedUser.timezone,
+              location: updatedUser.location ?? get().user?.location,
             },
           });
 
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
+
+      fetchMe: async () => {
+        const token = get().token;
+        if (!token) return false;
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/me`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (!res.ok) throw new Error('fetchMe failed');
+          const data = await res.json();
+          set({
+            user: {
+              id: data.userId ?? data.id,
+              name: data.name,
+              email: data.email,
+              registeredAt: data.registeredAt,
+              timezone: data.timezone,
+              location: data.location,
+            },
+          });
           return true;
         } catch (err) {
           console.error(err);

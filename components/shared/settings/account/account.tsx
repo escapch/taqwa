@@ -442,15 +442,15 @@ export const Account: React.FC<Props> = ({ className }) => {
 
       {/* Account Management (Logout & Delete) */}
       <Card className="p-5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-4">
           <Settings className="w-5 h-5" />
           <h3 className="text-lg font-semibold">Управление аккаунтом</h3>
         </div>
 
         <div className="flex flex-col gap-3">
           <Button
-            variant="outline"
-            className="w-full gap-2 justify-start text-muted-foreground"
+            variant="destructive"
+            className="gap-2 justify-start"
             onClick={() => setLogoutOpen(true)}
           >
             <LogOut className="w-4 h-4" />
@@ -470,8 +470,8 @@ export const Account: React.FC<Props> = ({ className }) => {
 
       {/* Logout Dialog */}
       <Dialog open={logoutOpen} onOpenChange={setLogoutOpen}>
-        <DialogContent>
-          <DialogHeader>
+        <DialogContent className="rounded-3xl">
+          <DialogHeader className="text-start">
             <DialogTitle>Выйти из аккаунта</DialogTitle>
             <DialogDescription>
               Вы уверены, что хотите выйти?

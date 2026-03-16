@@ -74,13 +74,9 @@ export const Settings: React.FC<Props> = ({ className }) => {
         async (position) => {
           const { latitude, longitude } = position.coords;
           await sendLocation({ latitude, longitude });
-          // Fetch the updated user profile from backend to get the precise location data
-          // A page reload or fetching 'me' would sync the state, but `sendLocation` does it on next load
-          // We can also just update the store manually if needed, but the easiest is reloading data
-          // Assuming user data is refetched on focus or manually via store
-          await useProfileStore.getState().updateProfile({}); // Dummy call to trigger user sync if needed, or simply reload
+          // Re-fetch the user from backend to sync location into the store
+          await useProfileStore.getState().fetchMe();
           toast.success('Геолокация сохранена');
-          window.location.reload(); // Quick sync
         },
         () => {
           toast.error('Вы запретили доступ к геопозиции');
@@ -110,7 +106,7 @@ export const Settings: React.FC<Props> = ({ className }) => {
       id: 6,
       name: 'Помощь (Telegram)',
       icon: <HelpCircle />,
-      link: 'https://t.me/your_telegram_username', // Replace with actual username
+      link: 'https://t.me/escapc4', // Replace with actual username
       isExternal: true,
     },
     {
