@@ -38,6 +38,7 @@ interface IProfileState {
   changePassword: (data: IChangePasswordData) => Promise<boolean>;
   deleteAccount: () => Promise<boolean>;
   deleteLocation: () => Promise<boolean>;
+  updateLocation: (latitude: number, longitude: number) => Promise<boolean>;
 }
 
 export const useProfileStore = create<IProfileState>()(
@@ -262,6 +263,42 @@ export const useProfileStore = create<IProfileState>()(
               user: {
                 ...user,
                 location: undefined,
+              },
+            });
+          }
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          return false;
+        }
+      },
+
+      updateLocation: async (latitude: number, longitude: number) => {
+        const token = get().token;
+        if (!token) return false;
+
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/users/location`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ latitude, longitude }),
+            }
+          );
+
+          if (!res.ok) throw new Error("Update location failed");
+
+          const user = get().user;
+          if (user) {
+            set({
+              user: {
+                ...user,
+                location: { latitude, longitude },
               },
             });
           }
