@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { ChevronRight, SendHorizontal, Clock, ListTodo, Loader2 } from 'lucide-react';
+import { SendHorizontal, Clock, ListTodo, Loader2 } from 'lucide-react';
 import { useFetch } from '@/hooks/useFetch';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -36,7 +36,16 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   const [newTodo, setNewTodo] = useState('');
   const [progress, setProgress] = useState(0);
   const { isAuthenticated } = useAuth();
-  const [todoList, setTodoList] = useState<ITasks[]>(defaultTasks);
+  const [todoList, setTodoList] = useState<ITasks[]>(() => {
+    if (typeof window === 'undefined') return defaultTasks;
+    const cached = sessionStorage.getItem('tasks-today');
+    if (!cached) return defaultTasks;
+
+    const { date, tasks } = JSON.parse(cached);
+    const today = new Date().toDateString();
+
+    return date === today ? tasks : defaultTasks;
+  });
   const [isFlipped, setIsFlipped] = useState(false);
 
   const { prayerTimes, isLoading, user, browserLocation, currentCity, activeTimezone, requestGeolocation } = usePrayerTimes();
@@ -73,6 +82,10 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   useEffect(() => {
     if (data) {
       setTodoList(data);
+      sessionStorage.setItem('tasks-today', JSON.stringify({
+        date: new Date().toDateString(),
+        tasks: data,
+      }));
     }
   }, [data]);
 
@@ -84,19 +97,23 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         todo._id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo,
       ),
     );
-    try {
-      await toggleTask(undefined, `/task/${id}/toggle`);
-    } catch (err) {
+
+    const result = await toggleTask(undefined, `/task/${id}/toggle`);
+
+    if (!result) {
       setTodoList(previousList);
       toast.error('Произошла ошибка, попробуйте еще раз');
     }
   };
 
   const removeTodo = async (id: number) => {
+    const previousList = todoList;
     setTodoList((prev) => prev.filter((todo) => todo._id !== id));
-    try {
-      await deleteTask(undefined, `/task/${id}`);
-    } catch (error) {
+
+    const result = await deleteTask(undefined, `/task/${id}`);
+
+    if (!result) {
+      setTodoList(previousList);
       toast.error('Произошла ошибка, попробуйте еще раз');
     }
   };
@@ -171,9 +188,9 @@ export const TodoList: React.FC<Props> = ({ className }) => {
           className="w-full h-full p-4 flex flex-col absolute inset-0 backface-hidden shadow-none border-0 bg-transparent"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <div className="flex items-center gap-3 justify-between px-2 pt-2 pb-4">
+          <div className="flex items-center gap-3 justify-between px-2 pt-2 pb-2">
             <div className="flex items-center gap-2">
-              <p className="text-3xl font-medium">Время намаза</p>
+              <p className="text-2xl font-bold tracking-tight">Время намаза</p>
             </div>
             <div className="flex items-center gap-3">
               <ListTodo className="text-primary cursor-pointer transition-colors" onClick={() => setIsFlipped(false)} />

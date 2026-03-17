@@ -1,6 +1,6 @@
 import { useProfileStore } from "@/store/profile";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -21,12 +21,18 @@ export function useFetch<TResponse = any, TBody = any>(
   const token = useProfileStore((state) => state.token);
   const router = useRouter();
 
+  const optionsRef = useRef(options);
+  useEffect(() => {
+    optionsRef.current = options;
+  });
+
   const execute = useCallback(
     async (
       overrideBody?: TBody,
       overrideUrl?: string
     ): Promise<TResponse | null> => {
       const finalUrl = overrideUrl || initialUrl;
+      const opts = optionsRef.current;
 
       setLoading(true);
       setError(null);
@@ -35,22 +41,23 @@ export function useFetch<TResponse = any, TBody = any>(
         const res = await fetch(
           process.env.NEXT_PUBLIC_BACKEND_API + finalUrl,
           {
-            method: options.method || "GET",
+            method: opts.method || "GET",
             headers: {
               "Content-Type": "application/json",
-              ...(options.auth && token
+              ...(opts.auth && token
                 ? { Authorization: `Bearer ${token}` }
                 : {}),
-              ...options.headers,
+              ...opts.headers,
             },
-            ...(options.method !== "GET" && (options.body || overrideBody)
-              ? { body: JSON.stringify(overrideBody || options.body) }
+            ...(opts.method !== "GET" && (opts.body || overrideBody)
+              ? { body: JSON.stringify(overrideBody || opts.body) }
               : {}),
           }
         );
 
         if (res.status === 401) {
           router.push("/login");
+          return null;
         }
 
         if (!res.ok) {
@@ -69,13 +76,8 @@ export function useFetch<TResponse = any, TBody = any>(
         setLoading(false);
       }
     },
-    [initialUrl, options, token]
+    [initialUrl, token]
   );
 
-  return {
-    data,
-    error,
-    loading,
-    execute,
-  };
+  return { data, error, loading, execute };
 }

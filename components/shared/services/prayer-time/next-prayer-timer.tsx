@@ -13,6 +13,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
+const ensure24hFormat = (time: string) => {
+    if (!time) return '';
+    return time.replace(/\s*(AM|PM|\(AM\)|\(PM\))\s*/gi, '').trim();
+};
+
 interface Props {
     className?: string;
     prayerTimes: Record<string, string>;
@@ -32,11 +37,10 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
         { name: 'Магриб', key: 'Maghrib' },
         { name: 'Иша', key: 'Isha' },
     ], []);
-
     useEffect(() => {
         if (!prayerTimes.Fajr || !userTimezone) return;
 
-        const intervalId = setInterval(() => {
+        const updateTimer = () => {
             const now = dayjs().tz(userTimezone);
             const todayDateStr = now.format('YYYY-MM-DD');
 
@@ -44,8 +48,9 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
             let nextPrayerTime: dayjs.Dayjs | null = null;
 
             for (const prayer of prayers) {
-                const timeStr = prayerTimes[prayer.key];
+                let timeStr = prayerTimes[prayer.key];
                 if (!timeStr) continue;
+                timeStr = ensure24hFormat(timeStr);
 
                 const prayerDateTime = dayjs.tz(`${todayDateStr} ${timeStr}`, 'YYYY-MM-DD HH:mm', userTimezone);
 
@@ -58,7 +63,8 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
 
             if (!nextPrayer && prayerTimes.Fajr) {
                 nextPrayer = prayers[0].name;
-                nextPrayerTime = dayjs.tz(`${todayDateStr} ${prayerTimes.Fajr}`, 'YYYY-MM-DD HH:mm', userTimezone).add(1, 'day');
+                const timeStr = ensure24hFormat(prayerTimes.Fajr);
+                nextPrayerTime = dayjs.tz(`${todayDateStr} ${timeStr}`, 'YYYY-MM-DD HH:mm', userTimezone).add(1, 'day');
             }
 
             if (nextPrayerTime && nextPrayer) {
@@ -74,7 +80,10 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
                 setTimeLeft({ h, m, s });
                 if (onTimerUpdate) onTimerUpdate(nextPrayer, formattedTime);
             }
-        }, 1000);
+        };
+
+        updateTimer();
+        const intervalId = setInterval(updateTimer, 1000);
 
         return () => clearInterval(intervalId);
     }, [prayerTimes, prayers, userTimezone, onTimerUpdate]);
@@ -86,7 +95,7 @@ export const NextPrayerTimer: React.FC<Props> = ({ className, prayerTimes, userT
     return (
         <div className={cn("text-center", className)}>
             <span className="text-sm font-medium opacity-60">До {nextPrayerName} осталось</span>
-            <div className="text-4xl font-bold">{timeLeft.h !== '00' ? `${timeLeft.h}:` : ''}{timeLeft.m}:{timeLeft.s}</div>
+            <div className="text-4xl font-semibold">{timeLeft.h !== '00' ? `${timeLeft.h}:` : ''}{timeLeft.m}:{timeLeft.s}</div>
         </div>
     );
 };

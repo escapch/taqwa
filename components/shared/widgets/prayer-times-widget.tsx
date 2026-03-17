@@ -72,42 +72,38 @@ export const PrayerTimesWidget: React.FC<PrayerTimesWidgetProps> = ({
 
     return (
         <div className={cn(
-            compact
-                ? "bg-transparent border-0 shadow-none p-0"
-                : "bg-zinc-900/90 border border-zinc-800 rounded-[2.5rem] overflow-hidden p-8 shadow-2xl",
+            "bg-transparent border-0 shadow-none p-0",
             cardClassName,
             className
         )}>
             {/* Timer + City */}
-            <div className={cn("flex items-start mb-2", compact ? "justify-end" : "justify-between")}>
-                {!compact && (
-                    <NextPrayerTimer
-                        prayerTimes={{
-                            Fajr: prayerTimes.Fajr,
-                            Dhuhr: prayerTimes.Dhuhr,
-                            Asr: prayerTimes.Asr,
-                            Maghrib: prayerTimes.Maghrib,
-                            Isha: prayerTimes.Isha
-                        }}
-                        userTimezone={activeTimezone}
-                        render={(next, h, m, s) => (
-                            <div className="space-y-0.5">
-                                <span className="text-zinc-400 font-semibold text-sm tracking-wide">{next} через</span>
-                                <div className="text-[2.6rem] font-black tracking-tight leading-none tabular-nums">
-                                    {h !== '00' ? `${parseInt(h)}:` : ''}{m}:{s}
-                                </div>
+            <div className={cn("flex items-center justify-between mb-2 px-1")}>
+                <NextPrayerTimer
+                    prayerTimes={{
+                        Fajr: prayerTimes.Fajr,
+                        Dhuhr: prayerTimes.Dhuhr,
+                        Asr: prayerTimes.Asr,
+                        Maghrib: prayerTimes.Maghrib,
+                        Isha: prayerTimes.Isha
+                    }}
+                    userTimezone={activeTimezone}
+                    render={(next, h, m, s) => (
+                        <div className="space-y-0.5">
+                            <span className="text-primary font-bold text-[10px] uppercase tracking-widest opacity-70">{next} через</span>
+                            <div className="text-2xl font-black tracking-tight leading-none tabular-nums text-foreground">
+                                {h !== '00' ? `${parseInt(h)}:` : ''}{m}:{s}
                             </div>
-                        )}
-                    />
-                )}
+                        </div>
+                    )}
+                />
 
                 <button
                     onClick={requestGeolocation}
-                    className="flex items-center gap-1.5 text-zinc-500 hover:text-primary transition-colors font-bold text-sm pt-1"
+                    className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-bold text-xs"
                     title="Обновить город"
                 >
                     {currentCity || 'Бишкек'}
-                    <Navigation className="h-3.5 w-3.5 fill-current" />
+                    <Navigation className="h-2.5 w-2.5 fill-current" />
                 </button>
             </div>
 
@@ -119,35 +115,38 @@ export const PrayerTimesWidget: React.FC<PrayerTimesWidgetProps> = ({
                     return (
                         <div key={prayer.key}>
                             <div className={cn(
-                                "flex justify-between items-center rounded-xl px-3 -mx-3 transition-colors",
-                                compact ? "py-2" : "py-3",
-                                isActive && "bg-white/5"
+                                "flex justify-between items-center rounded-2xl px-4 -mx-2 transition-all duration-500 group",
+                                compact ? "py-2" : "py-4",
+                                isActive ? "bg-primary/10 shadow-sm" : "hover:bg-accent/50"
                             )}>
                                 <span className={cn(
-                                    "font-bold transition-colors flex items-center gap-2",
-                                    compact ? "text-lg text-zinc-400" : "text-base",
-                                    isActive ? "text-primary" : "text-zinc-300"
+                                    "font-bold transition-colors flex items-center gap-3",
+                                    compact ? "text-lg text-muted-foreground" : "text-base",
+                                    isActive ? "text-primary scale-105 origin-left" : "text-foreground/80 group-hover:text-foreground"
                                 )}>
                                     {prayer.name}
                                     {isActive && (
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                                        </span>
                                     )}
                                 </span>
                                 <span className={cn(
-                                    "font-bold tabular-nums transition-colors",
-                                    compact ? "text-lg text-zinc-400" : "text-base",
-                                    isActive ? "text-primary" : hasTime ? "text-zinc-300" : "text-zinc-600"
+                                    "font-extrabold tabular-nums transition-all",
+                                    compact ? "text-lg text-muted-foreground" : "text-base",
+                                    isActive ? "text-primary scale-105 origin-right" : hasTime ? "text-foreground/80 group-hover:text-foreground" : "text-muted-foreground/30"
                                 )}>
                                     {hasTime ? prayer.time : '—'}
                                 </span>
                             </div>
                             {idx < prayers.length - 1 && (
-                                <div className={cn("h-px bg-zinc-800/60 mx-1", compact && "opacity-50")} />
+                                <div className={cn("h-px bg-border/40 mx-2", compact && "opacity-50")} />
                             )}
                         </div>
                     );
                 })}
             </div>
-        </div>
+        </div >
     );
 };
