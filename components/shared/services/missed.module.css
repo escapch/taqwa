@@ -30,6 +30,22 @@
   transform: translateX(-50%);
 }
 
+.dayPicker :global(.partial-day) {
+  position: relative;
+}
+
+.dayPicker :global(.partial-day::after) {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: hsl(48, 96%, 53%);
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .dayPicker :global(.registered-day) {
   border: 1px dashed hsl(var(--primary));
   border-radius: 50% !important;

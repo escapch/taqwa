@@ -40,7 +40,7 @@ export const PrayerTimesDisplay: React.FC<Props> = ({ className }) => {
     }
 
     return (
-        <div className={cn("mx-auto space-y-6 pt-8 px-4 w-full", className)}>
+        <div className={cn("mx-auto space-y-6 pt-4 px-4 w-full", className)}>
             <Header headerTitle="Время намаза" />
 
             <div className="space-y-1">
