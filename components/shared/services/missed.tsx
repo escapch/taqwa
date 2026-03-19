@@ -74,16 +74,20 @@ export const Missed: FC = () => {
     ? new Date((user as unknown as IUserExtended).registeredAt!)
     : undefined;
 
-  const handleDayClick = async (day: Date) => {
-    if (!day) {
-      return null;
-    }
-
-    const formattedDate = format(day, "yyyy-MM-dd");
-    const res = await getSelectedDay(undefined, `/task/date/${formattedDate}`);
-    setTaskData(res);
-    setSelectedDay(day);
+  const handleDayClick = (day: Date) => {
+    if (!day) return;
+    setTaskData([]); // Clear previous data so skeleton/loading shows
+    setSelectedDay(day); // Open modal instantly
   };
+
+  useEffect(() => {
+    if (selectedDay) {
+      const formattedDate = format(selectedDay, "yyyy-MM-dd");
+      getSelectedDay(undefined, `/task/date/${formattedDate}`).then((res) => {
+        if (res) setTaskData(res);
+      });
+    }
+  }, [selectedDay, getSelectedDay]);
 
   return (
     <Container className="flex flex-col  justify-between gap-5 pt-10">

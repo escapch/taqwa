@@ -1,17 +1,17 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { SendHorizontal, Clock, ListTodo, Loader2 } from 'lucide-react';
-import { useFetch } from '@/hooks/useFetch';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
-import { Taskslist } from './tasks-list';
-import { motion } from 'framer-motion';
-import { usePrayerTimes } from '@/hooks/use-prayer-times';
-import { PrayerTimesWidget } from './prayer-times-widget';
+"use client";
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { SendHorizontal, Clock, ListTodo, Loader2 } from "lucide-react";
+import { useFetch } from "@/hooks/useFetch";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { Taskslist } from "./tasks-list";
+import { motion } from "framer-motion";
+import { usePrayerTimes } from "@/hooks/use-prayer-times";
+import { PrayerTimesWidget } from "./prayer-times-widget";
 
 interface Props {
   className?: string;
@@ -25,20 +25,20 @@ export interface ITasks {
 }
 
 export const defaultTasks = [
-  { _id: 1, title: 'Фаджр', isCompleted: false, type: 'fard' },
-  { _id: 2, title: 'Зухр', isCompleted: false, type: 'fard' },
-  { _id: 3, title: 'Аср', isCompleted: false, type: 'fard' },
-  { _id: 4, title: 'Магриб', isCompleted: false, type: 'fard' },
-  { _id: 5, title: 'Иша', isCompleted: false, type: 'fard' },
+  { _id: 1, title: "Фаджр", isCompleted: false, type: "fard" },
+  { _id: 2, title: "Зухр", isCompleted: false, type: "fard" },
+  { _id: 3, title: "Аср", isCompleted: false, type: "fard" },
+  { _id: 4, title: "Магриб", isCompleted: false, type: "fard" },
+  { _id: 5, title: "Иша", isCompleted: false, type: "fard" },
 ];
 
 export const TodoList: React.FC<Props> = ({ className }) => {
-  const [newTodo, setNewTodo] = useState('');
+  const [newTodo, setNewTodo] = useState("");
   const [progress, setProgress] = useState(0);
   const { isAuthenticated } = useAuth();
   const [todoList, setTodoList] = useState<ITasks[]>(() => {
-    if (typeof window === 'undefined') return defaultTasks;
-    const cached = sessionStorage.getItem('tasks-today');
+    if (typeof window === "undefined") return defaultTasks;
+    const cached = sessionStorage.getItem("tasks-today");
     if (!cached) return defaultTasks;
 
     const { date, tasks } = JSON.parse(cached);
@@ -48,26 +48,34 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   });
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const { prayerTimes, isLoading, user, browserLocation, currentCity, activeTimezone, requestGeolocation } = usePrayerTimes();
+  const {
+    prayerTimes,
+    isLoading,
+    user,
+    browserLocation,
+    currentCity,
+    activeTimezone,
+    requestGeolocation,
+  } = usePrayerTimes();
 
   // Task API hooks
-  const { execute, data } = useFetch<ITasks[]>('/task/today', {
-    method: 'GET',
+  const { execute, data } = useFetch<ITasks[]>("/task/today", {
+    method: "GET",
     auth: true,
     skip: true,
   });
-  const { execute: toggleTask } = useFetch('', {
-    method: 'PATCH',
+  const { execute: toggleTask } = useFetch("", {
+    method: "PATCH",
     auth: true,
     skip: true,
   });
-  const { execute: deleteTask } = useFetch('', {
-    method: 'DELETE',
+  const { execute: deleteTask } = useFetch("", {
+    method: "DELETE",
     auth: true,
     skip: true,
   });
-  const { execute: addCustomTask } = useFetch('/task/custom', {
-    method: 'POST',
+  const { execute: addCustomTask } = useFetch("/task/custom", {
+    method: "POST",
     auth: true,
     skip: true,
   });
@@ -82,10 +90,13 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   useEffect(() => {
     if (data) {
       setTodoList(data);
-      sessionStorage.setItem('tasks-today', JSON.stringify({
-        date: new Date().toDateString(),
-        tasks: data,
-      }));
+      sessionStorage.setItem(
+        "tasks-today",
+        JSON.stringify({
+          date: new Date().toDateString(),
+          tasks: data,
+        }),
+      );
     }
   }, [data]);
 
@@ -102,7 +113,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
     if (!result) {
       setTodoList(previousList);
-      toast.error('Произошла ошибка, попробуйте еще раз');
+      toast.error("Произошла ошибка, попробуйте еще раз");
     }
   };
 
@@ -114,7 +125,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
     if (!result) {
       setTodoList(previousList);
-      toast.error('Произошла ошибка, попробуйте еще раз');
+      toast.error("Произошла ошибка, попробуйте еще раз");
     }
   };
 
@@ -124,9 +135,9 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         await addCustomTask({ title: newTodo });
         await execute();
       } catch (err) {
-        toast.error('Произошла ошибка, попробуйте еще раз');
+        toast.error("Произошла ошибка, попробуйте еще раз");
       } finally {
-        setNewTodo('');
+        setNewTodo("");
       }
     }
   };
@@ -141,24 +152,36 @@ export const TodoList: React.FC<Props> = ({ className }) => {
   }, [todoList]);
 
   return (
-    <div className={cn('relative w-full h-[450px]', className)} style={{ perspective: 1000 }}>
+    <div
+      className={cn("relative w-full h-[450px]", className)}
+      style={{ perspective: 1000 }}
+    >
       <motion.div
         className="w-full h-full relative"
         initial={false}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6, type: 'spring', stiffness: 200, damping: 20 }}
-        style={{ transformStyle: 'preserve-3d' }}
+        transition={{
+          duration: 0.6,
+          type: "spring",
+          stiffness: 200,
+          damping: 20,
+        }}
+        style={{ transformStyle: "preserve-3d" }}
       >
         {/* Front: Tasks */}
         <Card
           className="w-full h-full p-4 flex flex-col gap-6 absolute inset-0 backface-hidden"
-          style={{ backfaceVisibility: 'hidden' }}
+          style={{ backfaceVisibility: "hidden" }}
         >
-          <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center justify-between">
             <p className="text-3xl font-medium">Сегодня</p>
-            <div className="flex items-center gap-3">
-              <Clock className="text-primary cursor-pointer transition-colors" onClick={() => setIsFlipped(true)} />
-            </div>
+            <button
+              onClick={() => setIsFlipped(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary hover:bg-primary/10 border border-border transition-all active:scale-95 text-muted-foreground hover:text-primary"
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span className="text-xs font-medium">Время намаза</span>
+            </button>
           </div>
           <Progress value={progress} />
           <div className="flex-1 overflow-auto">
@@ -174,7 +197,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
               className="pr-10"
               onChange={(e) => setNewTodo(e.target.value)}
               value={newTodo}
-              onKeyDown={(e) => e.key === 'Enter' && addTask()}
+              onKeyDown={(e) => e.key === "Enter" && addTask()}
             />
             <SendHorizontal
               onClick={addTask}
@@ -186,14 +209,20 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         {/* Back: Prayer Times */}
         <Card
           className="w-full h-full p-4 flex flex-col absolute inset-0 backface-hidden shadow-none border-0 bg-transparent"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
           <div className="flex items-center gap-3 justify-between px-2 pt-2 pb-2">
             <div className="flex items-center gap-2">
               <p className="text-2xl font-bold tracking-tight">Время намаза</p>
             </div>
             <div className="flex items-center gap-3">
-              <ListTodo className="text-primary cursor-pointer transition-colors" onClick={() => setIsFlipped(false)} />
+              <button
+                onClick={() => setIsFlipped(false)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary hover:bg-primary/10 border border-border transition-all active:scale-95 text-muted-foreground hover:text-primary"
+              >
+                <ListTodo className="w-3.5 h-3.5" />
+                <span className="text-xs font-medium">Список намазов</span>
+              </button>
             </div>
           </div>
 
@@ -217,7 +246,9 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                 compact={true}
               />
             ) : (
-              <div className="flex justify-center items-center h-full text-zinc-500">Нет данных</div>
+              <div className="flex justify-center items-center h-full text-zinc-500">
+                Нет данных
+              </div>
             )}
           </div>
         </Card>
@@ -225,4 +256,3 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     </div>
   );
 };
-

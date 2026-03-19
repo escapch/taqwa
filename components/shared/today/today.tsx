@@ -17,24 +17,7 @@ interface Props {
 }
 
 export const Today: React.FC<Props> = ({ className }) => {
-  const { user, token, updateLocation } = useProfileStore();
-
-  // Auto-update geolocation on every visit
-  useEffect(() => {
-    if (!token || !user) return;
-    if (typeof window === 'undefined' || !navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        updateLocation(latitude, longitude);
-      },
-      (error) => {
-        console.debug('Auto-geolocation skipped:', error.message);
-      },
-      { timeout: 10000 }
-    );
-  }, [token, user]);
+  const { user, token } = useProfileStore();
 
   return (
     <div className={cn(className)}>

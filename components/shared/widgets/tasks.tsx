@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useFetch } from "@/hooks/useFetch";
 import { toast } from "sonner";
 import { defaultTasks, ITasks } from "./todo-list";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Tasks = ({
   taskData,
@@ -53,8 +54,13 @@ export const Tasks = ({
   };
 
   useEffect(() => {
-    setTodoList(taskData);
-    setProgress(checkProgress(taskData));
+    if (taskData.length > 0) {
+      setTodoList(taskData);
+      setProgress(checkProgress(taskData));
+    } else {
+      setTodoList([]);
+      setProgress(0);
+    }
   }, [taskData]);
 
   return (
@@ -72,14 +78,27 @@ export const Tasks = ({
       </div>
       {taskData && taskData.length > 0 ? (
         <>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm text-muted-foreground font-medium">
-              <span>Прогресс</span>
-              <span>{progress}%</span>
+          {/* Conditional rendering for progress bar and tasks/skeletons */}
+          {todoList.length === 0 ? ( // Check todoList for rendering skeletons
+            <div className="space-y-4 py-4">
+              <Skeleton className="h-14 w-full rounded-xl" />
+              <Skeleton className="h-14 w-full rounded-xl" />
+              <Skeleton className="h-14 w-full rounded-xl" />
+              <Skeleton className="h-14 w-full rounded-xl" />
+              <Skeleton className="h-14 w-full rounded-xl" />
             </div>
-            <Progress value={progress} className="h-2" />
-          </div>
-          <Taskslist taskData={todoList} toggleTodo={toggleTodo} />
+          ) : (
+            <>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm text-muted-foreground font-medium">
+                  <span>Прогресс</span>
+                  <span>{progress}%</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+              <Taskslist taskData={todoList} toggleTodo={toggleTodo} />
+            </>
+          )}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
