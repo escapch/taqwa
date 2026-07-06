@@ -1,9 +1,9 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Clock7, LayoutGrid, Cog } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, animate, type PanInfo } from "framer-motion";
 
 interface Props {
   className?: string;
@@ -15,9 +15,12 @@ const navItems = [
   { path: "/settings", label: "Настройки", icon: Cog },
 ];
 
+const spring = { type: "spring" as const, stiffness: 500, damping: 32 };
+
 export const BottomNavigation: React.FC<Props> = ({ className }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const getActiveIndex = () => {
     const index = navItems.findIndex((item) =>
@@ -27,27 +30,71 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
   };
 
   const [activeIndex, setActiveIndex] = useState(getActiveIndex());
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [itemWidth, setItemWidth] = useState(0);
+
+  // Позиция капли по X и её "жидкая" деформация при перетаскивании
+  const x = useMotionValue(0);
+  const scaleX = useMotionValue(1);
+  const skewX = useMotionValue(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => {
+      const styles = getComputedStyle(el);
+      const paddingX =
+        parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+      setItemWidth((el.offsetWidth - paddingX) / navItems.length);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setActiveIndex(getActiveIndex());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  const handleNavClick = (index: number) => {
+  useEffect(() => {
+    if (!itemWidth) return;
+    setDragIndex(null);
+    animate(x, activeIndex * itemWidth, spring);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex, itemWidth]);
+
+  const navigateTo = (index: number) => {
     setActiveIndex(index);
     router.push(navItems[index].path);
   };
 
-  // Обработка свайпов влево/вправо
-  const handleDragEnd = (event: any, info: any) => {
-    const swipeThreshold = 30; // сила свайпа для переключения
-    if (info.offset.x < -swipeThreshold && activeIndex < navItems.length - 1) {
-      // Свайп влево -> следующий пункт
-      handleNavClick(activeIndex + 1);
-    } else if (info.offset.x > swipeThreshold && activeIndex > 0) {
-      // Свайп вправо -> предыдущий пункт
-      handleNavClick(activeIndex - 1);
-    }
+  const nearestIndex = () => {
+    if (!itemWidth) return activeIndex;
+    return Math.min(
+      navItems.length - 1,
+      Math.max(0, Math.round(x.get() / itemWidth))
+    );
   };
+
+  const handleDrag = (_: unknown, info: PanInfo) => {
+    if (!itemWidth) return;
+    setDragIndex(nearestIndex());
+
+    // Упругая деформация капли в сторону движения пальца
+    const v = info.velocity.x;
+    scaleX.set(Math.min(1.35, 1 + Math.abs(v) / 6000));
+    skewX.set(Math.max(-10, Math.min(10, -v / 80)));
+  };
+
+  const handleDragEnd = () => {
+    animate(scaleX, 1, spring);
+    animate(skewX, 0, spring);
+    navigateTo(nearestIndex());
+  };
+
+  const highlightIndex = dragIndex ?? activeIndex;
 
   return (
     <nav
@@ -56,7 +103,8 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
         className
       )}
     >
-      <motion.div
+      <div
+        ref={containerRef}
         className="
           relative flex items-center justify-between w-full max-w-[340px]
           rounded-[3rem] p-[6px]
@@ -64,32 +112,37 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
           backdrop-blur-[24px] saturate-[1.5]
           border border-black/5 dark:border-white/10
           shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]
-          overflow-hidden touch-none
+          overflow-hidden
         "
-        onPanEnd={handleDragEnd}
       >
+        {itemWidth > 0 && (
+          <motion.div
+            drag="x"
+            dragConstraints={{
+              left: 0,
+              right: itemWidth * (navItems.length - 1),
+            }}
+            dragElastic={0.15}
+            dragMomentum={false}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            style={{ x, scaleX, skewX, width: itemWidth }}
+            className="absolute top-[6px] bottom-[6px] left-[6px] z-20 touch-none cursor-grab rounded-[2.5rem] bg-black/5 active:cursor-grabbing dark:bg-white/10"
+            transition={spring}
+          />
+        )}
+
         {navItems.map(({ path, label, icon: Icon }, idx) => {
-          const isActive = idx === activeIndex;
+          const isActive = idx === highlightIndex;
           return (
             <div
               key={path}
-              onClick={() => handleNavClick(idx)}
+              onClick={() => navigateTo(idx)}
               className={cn(
                 "relative z-10 flex flex-col items-center justify-center gap-[2px] py-2 rounded-[2.5rem] cursor-pointer",
                 "w-1/3" // чтобы элементы были одинаковой ширины
               )}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="bubble"
-                  className="absolute inset-0 bg-black/5 dark:bg-white/10 rounded-[2.5rem] -z-10"
-                  style={{
-                    boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 0 1px rgba(0,0,0,0.02)"
-                  }}
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                />
-              )}
-
               <Icon
                 size={24}
                 className={cn(
@@ -113,7 +166,7 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
             </div>
           );
         })}
-      </motion.div>
+      </div>
     </nav>
   );
 };

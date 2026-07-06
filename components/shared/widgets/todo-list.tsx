@@ -184,26 +184,35 @@ export const TodoList: React.FC<Props> = ({ className }) => {
             </button>
           </div>
           <Progress value={progress} />
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-2 -mr-2">
             <Taskslist
               taskData={todoList}
               onDelete={removeTodo}
               toggleTodo={toggleTodo}
             />
           </div>
-          <div className="relative w-full mt-auto">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              addTask();
+            }}
+            className="relative w-full mt-auto shrink-0 pt-2"
+          >
             <Input
               placeholder="Добавить задачу..."
-              className="pr-10"
+              className="pr-14 pl-4 text-base h-14 md:h-12 rounded-xl"
               onChange={(e) => setNewTodo(e.target.value)}
               value={newTodo}
-              onKeyDown={(e) => e.key === "Enter" && addTask()}
+              enterKeyHint="send"
             />
-            <SendHorizontal
-              onClick={addTask}
-              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-primary transition-all hover:bg-secondary duration-100 rounded-sm"
-            />
-          </div>
+            <button
+              type="submit"
+              disabled={!newTodo.trim()}
+              className="absolute right-2 top-1/2 mt-1 -translate-y-1/2 p-2 text-primary transition-all hover:bg-primary/10 focus:bg-primary/10 duration-100 rounded-lg disabled:opacity-50 flex items-center justify-center"
+            >
+              <SendHorizontal className="w-6 h-6 md:w-5 md:h-5" />
+            </button>
+          </form>
         </Card>
 
         {/* Back: Prayer Times */}
