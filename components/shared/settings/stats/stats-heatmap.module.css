@@ -1,0 +1,32 @@
+.heatmapWrap :global(.react-calendar-heatmap) {
+  height: 110px;
+  width: auto;
+  max-width: none;
+}
+
+.heatmapWrap :global(.react-calendar-heatmap text) {
+  fill: hsl(var(--muted-foreground));
+  font-size: 6px;
+}
+
+.heatmapWrap :global(.react-calendar-heatmap rect) {
+  rx: 2;
+  stroke: hsl(var(--background));
+  stroke-width: 1px;
+}
+
+.heatmapWrap :global(.color-empty) {
+  fill: hsl(var(--muted));
+}
+
+.heatmapWrap :global(.color-missed) {
+  fill: hsl(0, 84%, 60%);
+}
+
+.heatmapWrap :global(.color-partial) {
+  fill: hsl(48, 96%, 53%);
+}
+
+.heatmapWrap :global(.color-completed) {
+  fill: hsl(142, 76%, 36%);
+}
