@@ -74,6 +74,18 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     auth: true,
     skip: true,
   });
+  const { execute: checkAchievements } = useFetch<{
+    newlyUnlocked: {
+      key: string;
+      title: string;
+      description: string;
+      quote: { text: string; source: string } | null;
+    }[];
+  }>("/achievements", {
+    method: "GET",
+    auth: true,
+    skip: true,
+  });
   const { execute: addCustomTask } = useFetch("/task/custom", {
     method: "POST",
     auth: true,
@@ -114,7 +126,15 @@ export const TodoList: React.FC<Props> = ({ className }) => {
     if (!result) {
       setTodoList(previousList);
       toast.error("Произошла ошибка, попробуйте еще раз");
+      return;
     }
+
+    const achievements = await checkAchievements();
+    achievements?.newlyUnlocked.forEach((a) => {
+      toast.success(`Новое достижение: ${a.title}`, {
+        description: a.quote ? `«${a.quote.text}» — ${a.quote.source}` : a.description,
+      });
+    });
   };
 
   const removeTodo = async (id: number) => {

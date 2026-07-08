@@ -9,6 +9,7 @@ import {
   HelpCircle,
   Bell,
   MapPin,
+  Trophy,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '../widgets/theme-toggle';
@@ -100,6 +101,13 @@ export const Settings: React.FC<Props> = ({ className }) => {
       name: 'Статистика',
       icon: <ChartArea />,
       link: '/settings/stats',
+      isLink: true,
+    },
+    {
+      id: 2,
+      name: 'Достижения',
+      icon: <Trophy />,
+      link: '/settings/achievements',
       isLink: true,
     },
     {
