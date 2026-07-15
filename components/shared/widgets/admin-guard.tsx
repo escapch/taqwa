@@ -8,11 +8,11 @@ import { useProfileStore } from '@/store/profile';
 export const AdminGuard: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [hydrated, setHydrated] = useState(() => useProfileStore.persist.hasHydrated());
+  const [hydrated, setHydrated] = useState(() => useProfileStore.persist?.hasHydrated() ?? false);
 
   useEffect(() => {
     if (hydrated) return;
-    return useProfileStore.persist.onFinishHydration(() => setHydrated(true));
+    return useProfileStore.persist?.onFinishHydration(() => setHydrated(true));
   }, [hydrated]);
 
   useEffect(() => {
