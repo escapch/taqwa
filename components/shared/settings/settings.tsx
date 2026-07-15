@@ -10,6 +10,7 @@ import {
   Bell,
   MapPin,
   Trophy,
+  ShieldCheck,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '../widgets/theme-toggle';
@@ -124,6 +125,17 @@ export const Settings: React.FC<Props> = ({ className }) => {
       link: '/settings/account',
       isLink: true,
     },
+    ...(user?.isAdmin
+      ? [
+          {
+            id: 8,
+            name: 'Управление Лучами',
+            icon: <ShieldCheck />,
+            link: '/hadiths/admin',
+            isLink: true,
+          },
+        ]
+      : []),
   ];
 
   return (

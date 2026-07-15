@@ -8,6 +8,7 @@ interface IUser {
   registeredAt?: string;
   timezone?: string;
   location?: { latitude: number; longitude: number };
+  isAdmin?: boolean;
 }
 
 interface IUserCredentials {
@@ -178,6 +179,7 @@ export const useProfileStore = create<IProfileState>()(
               registeredAt: data.registeredAt,
               timezone: data.timezone,
               location: data.location,
+              isAdmin: data.isAdmin,
             },
           });
           return true;

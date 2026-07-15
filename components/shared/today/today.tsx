@@ -6,7 +6,6 @@ import { Container } from "../container";
 import { ClockWidget } from "../widgets/clock";
 import { TodoList } from "../widgets/todo-list";
 import { Card } from "@/components/ui/card";
-import { Veсize } from "../widgets/veсize";
 import { LoginButton } from "../widgets/login-button";
 import { BetaBtn } from "../widgets/beta-btn";
 
@@ -26,7 +25,6 @@ export const Today: FC<Props> = ({ className }) => {
           <ClockWidget />
         </Card>
         <TodoList />
-        <Veсize />
       </Container>
     </div>
   );

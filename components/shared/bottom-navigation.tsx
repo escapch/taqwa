@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
-import { Clock7, LayoutGrid, Cog } from "lucide-react";
+import { Clock7, LayoutGrid, Cog, BookOpenText } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, useMotionValue, animate, type PanInfo } from "framer-motion";
 
@@ -11,6 +11,7 @@ interface Props {
 
 const navItems = [
   { path: "/", label: "Сегодня", icon: Clock7 },
+  { path: "/hadiths", label: "Лучи", icon: BookOpenText },
   { path: "/services", label: "Сервисы", icon: LayoutGrid },
   { path: "/settings", label: "Настройки", icon: Cog },
 ];
@@ -106,7 +107,7 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
       <div
         ref={containerRef}
         className="
-          relative flex items-center justify-between w-full max-w-[340px]
+          relative flex items-center justify-between w-full max-w-[380px]
           rounded-[3rem] p-[6px]
           bg-white/70 dark:bg-[#121212]/85
           backdrop-blur-[24px] saturate-[1.5]
@@ -138,10 +139,8 @@ export const BottomNavigation: React.FC<Props> = ({ className }) => {
             <div
               key={path}
               onClick={() => navigateTo(idx)}
-              className={cn(
-                "relative z-10 flex flex-col items-center justify-center gap-[2px] py-2 rounded-[2.5rem] cursor-pointer",
-                "w-1/3" // чтобы элементы были одинаковой ширины
-              )}
+              style={{ width: itemWidth || undefined }}
+              className="relative z-10 flex flex-col items-center justify-center gap-[2px] py-2 rounded-[2.5rem] cursor-pointer"
             >
               <Icon
                 size={24}
