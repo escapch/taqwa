@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import { Heart, MessageCircle } from 'lucide-react';
 import { Container } from '../container';
 import { Header } from '../widgets/header';
@@ -70,6 +72,10 @@ export const HadithDetail: React.FC = () => {
 
       <p className="text-xl leading-relaxed font-medium whitespace-pre-line">{item.text}</p>
       {item.source && <p className="text-sm text-muted-foreground">— {item.source}</p>}
+
+      <p className="text-xs text-muted-foreground">
+        {format(new Date(item.createdAt), 'd MMMM yyyy', { locale: ru })}
+      </p>
 
       <div className="flex items-center gap-6 pt-2">
         <HadithActionButton

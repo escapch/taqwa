@@ -13,6 +13,7 @@ export interface HadithItem {
   likesCount: number;
   commentsCount: number;
   liked: boolean;
+  createdAt: string;
 }
 
 interface FeedResponse {

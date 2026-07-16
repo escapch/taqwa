@@ -2,6 +2,8 @@
 
 import { useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import { Heart, MessageCircle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -78,6 +80,10 @@ export const HadithCard: React.FC<Props> = ({ item, onLikeToggle, onCommentCount
       </div>
 
       {item.source && <p className="text-sm text-muted-foreground">— {item.source}</p>}
+
+      <p className="text-xs text-muted-foreground">
+        {format(new Date(item.createdAt), 'd MMMM yyyy', { locale: ru })}
+      </p>
 
       <div className="flex items-center gap-5 pt-1">
         <HadithActionButton
