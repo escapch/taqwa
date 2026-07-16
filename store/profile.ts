@@ -31,7 +31,7 @@ interface IProfileState {
   token: string | null;
   user: IUser | null;
   logIn: (credentials: IUserCredentials) => Promise<boolean>;
-  signIn: (credentials: IUserCredentials) => Promise<boolean>;
+  loginWithGoogle: (idToken: string) => Promise<boolean>;
   logOut: () => void;
   getUser: () => IUser | null;
   updateProfile: (data: IUpdateProfileData) => Promise<boolean>;
@@ -84,22 +84,22 @@ export const useProfileStore = create<IProfileState>()(
         }
       },
 
-      signIn: async (credentials) => {
+      loginWithGoogle: async (idToken) => {
         set({ loading: true });
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/login`,
+            `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/google`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(credentials),
+              body: JSON.stringify({ idToken }),
             }
           );
 
-          if (!res.ok) throw new Error("Login failed");
+          if (!res.ok) throw new Error("Google login failed");
 
           const data = await res.json();
 

@@ -4,14 +4,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import { useFetch } from "@/hooks/useFetch";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useProfileStore } from "@/store/profile";
 import { Label } from "@/components/ui/label";
-import { Chrome, Github, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GoogleSignInButton } from "@/components/shared/widgets/google-sign-in-button";
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: "Имя должно быть не менее 2 символов" }),
@@ -71,16 +73,7 @@ export default function Register() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" className="flex items-center gap-2">
-            <Chrome className="h-4 w-4" />
-            <span className="text-sm">Google</span>
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Github className="h-4 w-4" />
-            <span className="text-sm">GitHub</span>
-          </Button>
-        </div>
+        <GoogleSignInButton />
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -124,9 +117,8 @@ export default function Register() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Пароль</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 placeholder="********"
                 className={cn({ "border-red-500 focus-visible:ring-red-500": errors.password })}
                 {...register("password")}
