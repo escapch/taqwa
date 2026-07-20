@@ -6,7 +6,7 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useProfileStore } from "@/store/profile";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,13 @@ export default function Login() {
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { logIn, loading } = useProfileStore();
+
+  const getRedirectTarget = () => {
+    const next = searchParams.get("next");
+    return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  };
 
   const onSubmit = async (data: LoginFormData) => {
     const res = await logIn(data);
@@ -41,7 +47,7 @@ export default function Login() {
     }
 
     toast.success("Вы успешно вошли!");
-    router.push("/");
+    router.push(getRedirectTarget());
   };
 
   return (

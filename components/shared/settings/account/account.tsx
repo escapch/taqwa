@@ -100,7 +100,7 @@ export const Account: React.FC<Props> = ({ className }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push("/login?next=%2Fsettings%2Faccount");
     }
   }, [isAuthenticated, router]);
 

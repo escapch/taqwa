@@ -17,7 +17,7 @@ export function useHadithLike(
 
   return async () => {
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     onChange(!liked, likesCount + (liked ? -1 : 1));

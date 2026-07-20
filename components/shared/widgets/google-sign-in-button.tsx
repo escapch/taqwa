@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useProfileStore } from "@/store/profile";
 
@@ -29,6 +29,7 @@ const SCRIPT_ID = "google-identity-services";
 export const GoogleSignInButton: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { loginWithGoogle } = useProfileStore();
   const [ready, setReady] = useState(false);
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -40,7 +41,8 @@ export const GoogleSignInButton: React.FC = () => {
       const ok = await loginWithGoogle(response.credential);
       if (ok) {
         toast.success("Вы успешно вошли!");
-        router.push("/");
+        const next = searchParams.get("next");
+        router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/");
       } else {
         toast.error("Не удалось войти через Google");
       }

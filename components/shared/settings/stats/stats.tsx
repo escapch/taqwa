@@ -3,7 +3,9 @@
 import { Container } from '../../container';
 import { Header } from '../../widgets/header';
 import { FC, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useFetch } from '@/hooks/useFetch';
+import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatsSummaryCards } from './stats-summary-cards';
@@ -24,6 +26,8 @@ const PERIOD_LABELS: { value: StatsPeriod; label: string }[] = [
 
 export const Stats: FC<Props> = ({ className }) => {
   const [period, setPeriod] = useState<StatsPeriod>('month');
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { execute, data, loading } = useFetch<StatsResponse>('/task/stats', {
     method: 'GET',
     auth: true,
@@ -31,8 +35,12 @@ export const Stats: FC<Props> = ({ className }) => {
   });
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login?next=%2Fsettings%2Fstats');
+      return;
+    }
     execute(undefined, `/task/stats?period=${period}`);
-  }, [period]);
+  }, [period, isAuthenticated, router]);
 
   const isInitialLoading = loading && !data;
 

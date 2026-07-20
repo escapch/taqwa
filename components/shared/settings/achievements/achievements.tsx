@@ -3,7 +3,9 @@
 import { Container } from '../../container';
 import { Header } from '../../widgets/header';
 import { FC, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useFetch } from '@/hooks/useFetch';
+import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -32,6 +34,8 @@ interface Props {
 }
 
 export const Achievements: FC<Props> = ({ className }) => {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { execute, data } = useFetch<AchievementsResponse>('/achievements', {
     method: 'GET',
     auth: true,
@@ -39,8 +43,12 @@ export const Achievements: FC<Props> = ({ className }) => {
   });
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login?next=%2Fsettings%2Fachievements');
+      return;
+    }
     execute();
-  }, []);
+  }, [isAuthenticated, router]);
 
   return (
     <Container className={`flex flex-col justify-between gap-5 pt-10 ${className ?? ''}`}>

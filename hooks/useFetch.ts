@@ -56,7 +56,8 @@ export function useFetch<TResponse = any, TBody = any>(
         );
 
         if (res.status === 401) {
-          router.push("/login");
+          const next = window.location.pathname + window.location.search;
+          router.push(`/login?next=${encodeURIComponent(next)}`);
           return null;
         }
 
